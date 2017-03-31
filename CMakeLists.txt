@@ -42,14 +42,6 @@ FILE(GLOB_RECURSE HeaderFiles "${PROJECT_SOURCE_DIR}/src/*.h")
 add_custom_target(headers SOURCES ${HeaderFiles})
 
 # -------------------------------------------------------------------------
-# ---------------------   External Dependencies       ---------------------
-# -------------------------------------------------------------------------
-include(ExternalProject)
-include(cmake/external/gtest.cmake)
-
-SET( INCLUDES ${INCLUDES} ${GTEST_INCLUDE_DIR} )
-
-# -------------------------------------------------------------------------
 # -----------------------      Manage Modules       -----------------------
 # -------------------------------------------------------------------------
 add_subdirectory ( libavcpp )

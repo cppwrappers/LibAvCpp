@@ -1,7 +1,5 @@
 ![ffmpeg logo](https://trac.ffmpeg.org/ffmpeg-logo.png)
-# libavcpp - C++ Wrapper for FFmpeg library
-
-libavcpp is a wrapper for the ffmpeg libraries.
+# LibAvC++ - C++ Wrapper for FFmpeg library
 
 ## Inlcude in your project:
 

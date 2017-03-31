@@ -1,6 +1,6 @@
-# libavcpp - C++ Wrapper for ffmpeg library
+![ffmpeg logo](https://trac.ffmpeg.org/ffmpeg-logo.png)
+# libavcpp - C++ Wrapper for FFmpeg library
 
-![ffmpeg logo](https://lh5.googleusercontent.com/-LX53aOM1JLI/AAAAAAAAAAI/AAAAAAAAAGo/cBe-_Z4t4EI/s0-c-k-no-ns/photo.jpg)
 libavcpp is a wrapper for the ffmpeg libraries.
 
 ## Inlcude in your project:

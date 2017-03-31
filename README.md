@@ -1,5 +1,5 @@
 ![ffmpeg logo](https://trac.ffmpeg.org/ffmpeg-logo.png)
-# LibAvC++ - C++ Wrapper for FFmpeg library
+# C++ Wrapper for FFmpeg library
 
 ## Inlcude in your project:
 

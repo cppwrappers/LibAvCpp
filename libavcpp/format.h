@@ -22,8 +22,8 @@ public:
     ~Format();
 
     std::error_code open( const std::string& name );
-    std::vector< Stream > streams();
-    libav::Metadata metadata();
+    std::vector< Stream > streams() const;
+    libav::Metadata metadata() const ;
     av::Frame get();
     uint64_t playtime() const;
 

@@ -91,7 +91,7 @@ std::error_code Format::open( const std::string& filename ) {
     return std::error_code ();
 }
 
-std::vector< Stream > Format::streams() {
+std::vector< Stream > Format::streams() const {
     std::vector< Stream > _streams;
     for(unsigned short i=0; i<format_->input_format_context->nb_streams; i++)
         _streams.push_back(
@@ -108,7 +108,7 @@ std::vector< Stream > Format::streams() {
     return _streams;
 }
 
-libav::Metadata Format::metadata() {
+libav::Metadata Format::metadata() const {
     libav::Metadata _metadata;
     AVDictionaryEntry *tag = NULL;
 

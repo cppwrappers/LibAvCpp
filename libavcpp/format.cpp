@@ -1,5 +1,8 @@
 #include "format.h"
 
+#include <sstream>
+#include <string>
+
 extern "C" {
 #include "libavformat/avformat.h"
 #include "libavformat/avio.h"
@@ -189,4 +192,35 @@ av::Frame get( const Stream& stream ) {
 //        }
 //    }
 }
+
+std::string Format::time_to_string( int playtime ) {
+  int _seconds = playtime / 1000;
+  std::stringstream ss;
+  if(_seconds >= 3600) {
+    int hours = _seconds / 3600;
+    if(hours < 10) {
+      ss << "0";
+    }
+    ss << hours << ":";
+    _seconds = _seconds - (hours * 3600);
+  } else ss << "00:";
+  if(_seconds >= 60) {
+    int minutes = _seconds / 60;
+    if(minutes < 10) {
+      ss << "0";
+    }
+    ss << minutes << ":";
+    _seconds = _seconds - (minutes * 60);
+  } else ss << "00:";
+  if(_seconds < 10) {
+    ss << "0";
+  }
+  ss << _seconds << ".";
+  int _millis = (playtime - ( ( playtime / 1000 ) * 1000 ) );
+  if( _millis < 100 )  ss << "0";
+  if( _millis < 10 )  ss << "0";
+  ss << _millis;
+  return ss.str();
+}
+
 }//namespace av

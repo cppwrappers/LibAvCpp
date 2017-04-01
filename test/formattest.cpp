@@ -68,4 +68,8 @@ TEST_F( FormatTest, metadata ) { //TODO file with metadata
     libav::Metadata _metadata = _format.metadata();
     EXPECT_EQ( "", _metadata.get( libav::Metadata::TITLE ) );
 }
-}//namespace av
+TEST_F( FormatTest, time_to_string ) {
+    EXPECT_EQ( "00:00:01.000", Format::time_to_string( 1000 ) );
+    EXPECT_EQ( "01:00:00.000", Format::time_to_string( 3600000 ) );
+    EXPECT_EQ( "02:02:28.015", Format::time_to_string( 7348015 ) );
+}}//namespace av

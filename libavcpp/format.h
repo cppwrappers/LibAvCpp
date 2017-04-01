@@ -26,6 +26,13 @@ public:
     libav::Metadata metadata();
     av::Frame get();
 
+    /**
+     * @brief convert playtime in millisecond to hh:mm:ss.milliseconds
+     * @param playtime millisecond
+     * @return formated string
+     */
+    static std::string time_to_string( int playtime );
+
 private:
     std::once_flag _register_flag, codec_flag;
     std::shared_ptr< __Format > format_ = nullptr;

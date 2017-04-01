@@ -95,7 +95,7 @@ std::vector< Stream > Format::streams() const {
     std::vector< Stream > _streams;
     for(unsigned short i=0; i<format_->input_format_context->nb_streams; i++)
         _streams.push_back(
-            Stream {i,
+            Stream (i,
                     __codec_type( format_->input_format_context->streams[i]->codec->codec_type ),
                     __codec( format_->input_format_context->streams[i]->codec->codec_id ),
                     format_->input_format_context->streams[i]->codec->bit_rate,
@@ -104,7 +104,7 @@ std::vector< Stream > Format::streams() const {
                     format_->input_format_context->streams[i]->codec->bits_per_raw_sample,
                     format_->input_format_context->streams[i]->codec->width,
                     format_->input_format_context->streams[i]->codec->height,
-                    format_->input_format_context->streams[i]->codec->pix_fmt } );
+                    format_->input_format_context->streams[i]->codec->pix_fmt ) );
     return _streams;
 }
 
@@ -140,7 +140,7 @@ libav::Metadata Format::metadata() const {
 
     if ( tag ) { _metadata.set ( tag->key, tag->value ); }
 
-    tag = av_dict_get ( format_->input_format_context->metadata, "year", nullptr, AV_DICT_IGNORE_SUFFIX );
+    tag = av_dict_get ( format_->input_format_context->metadata, "date", nullptr, AV_DICT_IGNORE_SUFFIX );
 
     if ( tag ) { _metadata.set ( tag->key, tag->value ); }
 

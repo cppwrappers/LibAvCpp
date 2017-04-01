@@ -32,7 +32,7 @@ void Metadata::set ( const char* name, const char* value ) {
     else if ( strcmp ( "COMMENT", _upper_name.c_str() ) == 0 )
     { tags[ COMMENT ] = value; }
 
-    else if ( strcmp ( "YEAR", _upper_name.c_str() ) == 0 )
+    else if ( strcmp ( "DATE", _upper_name.c_str() ) == 0 )
     { tags[ YEAR ] = value; }
 
     else if ( strcmp ( "TRACK", _upper_name.c_str() ) == 0 )

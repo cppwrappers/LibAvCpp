@@ -193,6 +193,15 @@ av::Frame get( const Stream& stream ) {
 //    }
 }
 
+uint64_t Format::playtime() const {
+    int64_t _millis;
+    if ( format_->input_format_context->duration != AV_NOPTS_VALUE ) {
+        uint64_t duration = format_->input_format_context->duration + ( format_->input_format_context->duration <= INT64_MAX - 5000 ? 5000 : 0 );
+        _millis  = duration / AV_TIME_BASE;
+    }
+    return _millis;
+}
+
 std::string Format::time_to_string( int playtime ) {
   int _seconds = playtime / 1000;
   std::stringstream ss;

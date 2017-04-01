@@ -25,6 +25,7 @@ public:
     std::vector< Stream > streams();
     libav::Metadata metadata();
     av::Frame get();
+    uint64_t playtime() const;
 
     /**
      * @brief convert playtime in millisecond to hh:mm:ss.milliseconds

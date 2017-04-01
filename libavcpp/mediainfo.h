@@ -16,7 +16,6 @@ struct MediaInfo {
     int bitrate;
     int samplerate;
     int channels;
-    int64_t playtime;
     int bits_per_sample;
     int width;
     int height;

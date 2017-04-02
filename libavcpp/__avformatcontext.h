@@ -28,7 +28,7 @@ extern "C" {
 
 #include "averrc.h"
 
-namespace libav {
+namespace av {
 
 class __AVFormatContext {
 public:
@@ -45,14 +45,14 @@ public:
         AVFormatContext* _input_format_context = nullptr;
 
         if ( ( _error = avformat_open_input ( &_input_format_context, filename, NULL, NULL ) ) < 0 )
-        { return libav::make_error_code ( _error ); }
+        { return av::make_error_code ( _error ); }
 
         input_format_context = std::shared_ptr< AVFormatContext > ( _input_format_context,
         [] ( AVFormatContext* p ) { if ( p ) { avformat_close_input ( &p ); } } );
 
         /** Get information on the input file (number of streams etc.). */
         if ( ( _error = avformat_find_stream_info ( input_format_context.get(), NULL ) ) < 0 )
-        { return libav::make_error_code ( _error ); };
+        { return av::make_error_code ( _error ); };
 
         return std::error_code ();
     }

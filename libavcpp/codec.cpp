@@ -1,6 +1,6 @@
 #include "codec.h"
 
-namespace libav {
+namespace av {
 std::array< std::string, 4 > Codec::codec_names_ {"mp3", "flac", "aac", "vorbis" };
 std::string Codec::name ( Enum codec ) {
     if ( codec == NONE ) { return "none"; }

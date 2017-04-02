@@ -16,12 +16,12 @@ SET( LIBS ${LIBS}
     ${Boost_LIBRARIES} ${AVCODEC_LIBRARIES}
 #    -lpcrecpp -lpthread -luuid -lswresample -lm -lz
 )
-SET( INCLUDES   ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
+SET( INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
 
 # -------------------------------------------------------------------------
 # -----------------------   Compile Binary          -----------------------
 # -------------------------------------------------------------------------
-include_directories(${ROOT} ${INCLUDES})
+#include_directories(${ROOT} ${INCLUDES})
 #aux_source_directory( ${PROJECT_SOURCE_DIR} SQUAWK_SOURCES )
 
 find_package(LibAO)
@@ -38,6 +38,8 @@ find_package(SDL)
     target_link_libraries(sdl_play avcpp ${LIBS} ${SDL_LIBRARIES})
 #endif()
 
+message( "INCLUDES:" ${INCLUDES} )
+include_directories(${ROOT} ${INCLUDES} )
 add_executable( metadata metadata.cpp )
 target_link_libraries(metadata avcpp ${LIBS} -lpcrecpp -lpthread -luuid -lswresample -lm -lz)
 

@@ -5,7 +5,7 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-namespace libav {
+namespace av {
 
 static std::array< std::string, 11 > _tag_names {
     { "title", "album", "artist", "composer", "performer", "comment", "year", "track", "disc", "genre", "publisher"  }
@@ -32,8 +32,15 @@ void Metadata::set ( const char* name, const char* value ) {
     else if ( strcmp ( "COMMENT", _upper_name.c_str() ) == 0 )
     { tags[ COMMENT ] = value; }
 
-    else if ( strcmp ( "DATE", _upper_name.c_str() ) == 0 )
-    { tags[ YEAR ] = value; }
+    else if ( strcmp ( "YEAR", _upper_name.c_str() ) == 0 ) {
+        std::string _year = value;
+        if( _year.size() > 4 ) {
+            if( 4U == _year.find( "-" ) ) {
+                _year = _year.substr( 0, 4 );
+            } else std::cout << "unknown date format: " << _year << std::endl;
+        }
+        tags[ YEAR ] = _year;
+    }
 
     else if ( strcmp ( "TRACK", _upper_name.c_str() ) == 0 )
     { tags[ TRACK ] = value; }

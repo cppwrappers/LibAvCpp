@@ -3,7 +3,7 @@
 
 #include <system_error>
 
-namespace libav {
+namespace av {
 
 //Taken from ffmpeg to save include.
 #define AV_MKTAG(a,b,c,d) ((a) | ((b) << 8) | ((c) << 16) | ((unsigned)(d) << 24))
@@ -40,13 +40,13 @@ enum av_errc {
     AV_HTTP_OTHER_4XX      = AV_FFERRTAG ( 0xF8,'4','X','X' ),
     AV_HTTP_SERVER_ERROR   = AV_FFERRTAG ( 0xF8,'5','X','X' )
 };
-}//namespace libav
+}//namespace av
 
 namespace std {
-template<> struct is_error_condition_enum<libav::av_errc> : public true_type {};
+template<> struct is_error_condition_enum<av::av_errc> : public true_type {};
 }//namespace std
 
-namespace libav {
+namespace av {
 class av_category_t : public std::error_category {
 public:
     virtual const char* name() const noexcept;
@@ -95,5 +95,5 @@ inline std::error_code make_error_code ( int error ) {
 
     return std::error_code ( abs ( error ), std::generic_category() );
 }
-}//namespace libav
+}//namespace av
 #endif // AVERRC_H

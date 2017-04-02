@@ -12,7 +12,7 @@ extern "C" {
 #endif
 }
 
-namespace libav {
+namespace av {
 
 const char* av_category_t::name() const noexcept { return "av"; }
 std::error_condition av_category_t::default_error_condition ( int ev ) const noexcept {
@@ -102,4 +102,4 @@ std::string av_category_t::message ( int ev ) const {
     av_strerror ( ev, error_buffer, sizeof ( error_buffer ) );
     return error_buffer;
 }
-}//namespace libav
+}//namespace av

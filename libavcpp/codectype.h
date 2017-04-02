@@ -12,7 +12,7 @@ namespace av {
  */
 struct CodecType {
     enum Enum {
-        NONE = -1, AUDIO=0, VIDEO=1, DATA=2
+        NONE = -1, VIDEO=0, AUDIO=1, DATA=2, SUBTITLE=3, ATTACHMENT=4, NB=5
     };
     static std::string name ( Enum codec );
     friend std::ostream& operator<< ( std::ostream& stream, const CodecType::Enum& codec_type ) {
@@ -20,7 +20,7 @@ struct CodecType {
         return stream;
     }
 private:
-    static std::array< std::string, 3 > codec_type_names_;
+    static std::array< std::string, 6 > codec_type_names_;
 };
 }//namespace av
 #endif // CODECTYPE_H

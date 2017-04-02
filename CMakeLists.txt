@@ -38,8 +38,10 @@ IF(CMAKE_BUILD_TYPE MATCHES RELEASE)
 ENDIF(CMAKE_BUILD_TYPE MATCHES RELEASE)
 
 #add headers for editor
-FILE(GLOB_RECURSE HeaderFiles "${PROJECT_SOURCE_DIR}/src/*.h")
+FILE(GLOB_RECURSE HeaderFiles "${PROJECT_SOURCE_DIR}/*.h" "${ROOT}/libavcpp.h")
 add_custom_target(headers SOURCES ${HeaderFiles})
+
+SET( INCLUDES ${INCLUDES} ${PROJECT_SOURCE_DIR} )
 
 # -------------------------------------------------------------------------
 # -----------------------      Manage Modules       -----------------------
@@ -51,17 +53,3 @@ endif()
 if( build_tests )
     add_subdirectory ( test )
 endif()
-
-## -------------------------------------------------------------------------
-## -----------------------   Compile Binary          -----------------------
-## -------------------------------------------------------------------------
-#include_directories(${ROOT} ${INCLUDES})
-#aux_source_directory( src/ SQUAWK_SOURCES )
-
-#add_executable(squawk squawkmain.cpp ${SQUAWK_SOURCES} ${SQUAWK_SOURCES_DB} ${SQUAWK_SOURCES_UPNP}
-#    ${SQUAWK_SOURCES_SSDP} ${SQUAWK_SOURCES_SSDP_ASIO} ${SQUAWK_SOURCES_UTILS} ${SQUAWK_SOURCES_LIBAV} )
-#target_link_libraries(squawk easylogging fmt lightning asio re2 rapidjson ${LIBS})
-#install(TARGETS squawk RUNTIME DESTINATION bin)
-
-
-#add_executable(${PROJECT_NAME} "main.cpp")

@@ -1,25 +1,28 @@
 #include <iostream>
 
-#include "../libavcpp/formatcontext.h"
-#include "../libavcpp/aviostream.h"
+#include "libavcpp.h"
 
-int main(int /*argc*/, char *argv[]) {
+int main(int argc, char *argv[]) {
 
-    libav::FormatContext _format_context;
-    std::error_code _errc;
-    if( ( _errc = _format_context.input( argv[1] ) ) ) {
-        std::cerr << _errc.message() << std::endl;
+    if (argc < 2) {
+        std::cerr << "Please provide a file path as argument(s)" << std::endl;
         return -1;
     }
 
-    std::cout << argv[1] << " (" <<
-        _format_context.duration() << " sec/" <<
-        _format_context.count() << " streams)\n";
+    av::Format format;
+    std::error_code _errc;
+    _errc = format.open( argv[1] );
+    if( !_errc ) {
+        av::Metadata metadata = format.metadata();
+        std::cout << argv[1] << " (" <<
+            av::Format::time_to_string( format.playtime() ) << " sec/" <<
+            format.streams().size() << " streams)\n";
 
-    for( int i=0; i<_format_context.count(); ++i ) {
-        auto _input_stream = _format_context.stream( i );
-        std::cout  << *_input_stream << "\n";
-    }
-    std::cout << _format_context.metadata() << std::endl;
+        for( auto& __stream : format.streams() ) {
+            std::cout  << __stream << "\n";
+        }
+        std::cout << metadata << std::endl;
+
+    } else std::cerr << _errc.message();
     return 0;
 }

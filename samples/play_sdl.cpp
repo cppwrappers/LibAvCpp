@@ -40,7 +40,7 @@ int main( int argc, char* argv[] ) {
 
     av::Stream video_stream;
     for( auto& stream : _format.streams() ) {
-        if( stream.codec_type == av::CodecType::VIDEO ) {
+        if( stream.codec_type() == av::CodecType::VIDEO ) {
             video_stream = stream;
         }
     }
@@ -51,23 +51,23 @@ int main( int argc, char* argv[] ) {
     }
 
     SDL_Surface *screen;
-    screen = SDL_SetVideoMode(video_stream.width, video_stream.height, 0, 0);
+    screen = SDL_SetVideoMode(video_stream.width(), video_stream.height(), 0, 0);
     if(!screen) {
       fprintf(stderr, "SDL: could not set video mode - exiting\n");
       exit(1);
     }
 
     SDL_Overlay     *bmp = NULL;
-    bmp = SDL_CreateYUVOverlay(video_stream.width, video_stream.height,
+    bmp = SDL_CreateYUVOverlay(video_stream.width(), video_stream.height(),
                                SDL_YV12_OVERLAY, screen);
 
     // initialize SWS context for software scaling
     struct SwsContext *sws_ctx = NULL;
-    sws_ctx = sws_getContext(video_stream.width,
-                             video_stream.height,
-                 static_cast< AVPixelFormat >( video_stream.pixel_format ),
-                 video_stream.width,
-                 video_stream.height,
+    sws_ctx = sws_getContext(video_stream.width(),
+                             video_stream.height(),
+                 static_cast< AVPixelFormat >( video_stream.pixel_format() ),
+                 video_stream.width(),
+                 video_stream.height(),
                  PIX_FMT_YUV420P,
                  SWS_BILINEAR,
                  NULL,

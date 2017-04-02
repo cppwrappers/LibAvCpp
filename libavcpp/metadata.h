@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
-namespace libav {
+namespace av {
 
 /**
  * @brief The Metadata struct

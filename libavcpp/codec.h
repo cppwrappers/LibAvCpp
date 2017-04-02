@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-namespace libav {
+namespace av {
 
 /**
  * @brief The Codec struct

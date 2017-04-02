@@ -27,22 +27,22 @@ extern "C" {
 
 namespace av {
 
-inline libav::Codec::Enum __codec ( AVCodecID codec_id ) {
+inline av::Codec::Enum __codec ( AVCodecID codec_id ) {
     switch ( codec_id ) {
     case AV_CODEC_ID_MP3:
-        return libav::Codec::MP3;
+        return av::Codec::MP3;
 
     case AV_CODEC_ID_FLAC:
-        return libav::Codec::FLAC;
+        return av::Codec::FLAC;
 
     case AV_CODEC_ID_AAC:
-        return libav::Codec::AAC;
+        return av::Codec::AAC;
 
     case AV_CODEC_ID_VORBIS:
-        return libav::Codec::VORBIS;
+        return av::Codec::VORBIS;
 
     default:
-        return libav::Codec::NONE;
+        return av::Codec::NONE;
     }
 }
 inline av::CodecType::Enum __codec_type ( AVMediaType codec_type ) {
@@ -69,28 +69,35 @@ Format::Format() : format_( std::make_shared< __Format >() ) {
 
 }
 Format::~Format() {}
-std::error_code Format::open( const std::string& filename ) {
-    int _error;
-    /** Open the input file to read from it. */
-    AVFormatContext* _input_format_context = nullptr;
+std::error_code Format::open( const std::string& filename, Mode mode ) {
+    switch( mode ) {
+    case READ: {
+        int _error;
+        /** Open the input file to read from it. */
+        AVFormatContext* _input_format_context = nullptr;
 
-    if ( ( _error = avformat_open_input ( &_input_format_context, filename.c_str(), NULL, NULL ) ) != 0 )
-    { return libav::make_error_code ( _error ); }
+        if ( ( _error = avformat_open_input ( &_input_format_context, filename.c_str(), NULL, NULL ) ) != 0 )
+        { return av::make_error_code ( _error ); }
 
-    format_->input_format_context = std::shared_ptr< AVFormatContext > ( _input_format_context,
-    [] ( AVFormatContext* p ) { if ( p ) { avformat_close_input ( &p ); } } );
+        format_->input_format_context = std::shared_ptr< AVFormatContext > ( _input_format_context,
+        [] ( AVFormatContext* p ) { if ( p ) { avformat_close_input ( &p ); } } );
 
-    /** Get information on the input file (number of streams etc.). */
-    if ( ( _error = avformat_find_stream_info ( format_->input_format_context.get(), NULL ) ) < 0 )
-    { return libav::make_error_code ( _error ); };
+        /** Get information on the input file (number of streams etc.). */
+        if ( ( _error = avformat_find_stream_info ( format_->input_format_context.get(), NULL ) ) < 0 )
+        { return av::make_error_code ( _error ); };
 
-//TODO only in debug mode
-    av_dump_format(format_->input_format_context.get(), 0, filename.c_str(), 0);
-//TODO only in debug mode
+//    //TODO only in debug mode
+//        av_dump_format(format_->input_format_context.get(), 0, filename.c_str(), 0);
+//    //TODO only in debug mode
+        break;
+    }
+    case WRITE:
+        break;
+    }
+
 
     return std::error_code ();
 }
-
 std::vector< Stream > Format::streams() const {
     std::vector< Stream > _streams;
     for(unsigned short i=0; i<format_->input_format_context->nb_streams; i++)
@@ -108,8 +115,8 @@ std::vector< Stream > Format::streams() const {
     return _streams;
 }
 
-libav::Metadata Format::metadata() const {
-    libav::Metadata _metadata;
+av::Metadata Format::metadata() const {
+    av::Metadata _metadata;
     AVDictionaryEntry *tag = NULL;
 
     tag = av_dict_get ( format_->input_format_context->metadata, "title", nullptr, AV_DICT_IGNORE_SUFFIX );
@@ -141,6 +148,10 @@ libav::Metadata Format::metadata() const {
     if ( tag ) { _metadata.set ( tag->key, tag->value ); }
 
     tag = av_dict_get ( format_->input_format_context->metadata, "date", nullptr, AV_DICT_IGNORE_SUFFIX );
+
+    if ( tag ) { _metadata.set ( "year", tag->value ); }
+
+    tag = av_dict_get ( format_->input_format_context->metadata, "year", nullptr, AV_DICT_IGNORE_SUFFIX );
 
     if ( tag ) { _metadata.set ( tag->key, tag->value ); }
 
@@ -230,6 +241,9 @@ std::string Format::time_to_string( int playtime ) {
   if( _millis < 10 )  ss << "0";
   ss << _millis;
   return ss.str();
+}
+std::error_code Format::transcode( Stream target_stream ) {
+
 }
 
 }//namespace av

@@ -18,12 +18,14 @@ namespace av {
 struct __Format;
 class Format {
 public:
+    enum Mode { READ, WRITE };
     Format();
     ~Format();
 
-    std::error_code open( const std::string& name );
+    std::error_code open( const std::string& name, Mode mode = READ );
+    std::error_code transcode( Stream target_stream );
     std::vector< Stream > streams() const;
-    libav::Metadata metadata() const ;
+    av::Metadata metadata() const ;
     av::Frame get();
     uint64_t playtime() const;
 

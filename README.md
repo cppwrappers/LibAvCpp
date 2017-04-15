@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cppwrappers/LibAvCpp.svg?branch=master)](https://travis-ci.org/cppwrappers/LibAvCpp)
+
 ![ffmpeg logo](https://trac.ffmpeg.org/ffmpeg-logo.png)
 # C++ Wrapper for FFmpeg library
 

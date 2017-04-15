@@ -13,10 +13,6 @@ include(${CMAKE_MODULE_PATH}/../external/gtest.cmake)
 
 SET( INCLUDES ${INCLUDES} ${GTEST_INCLUDE_DIR} )
 
-find_package(SDL)
-SET( LIBS ${LIBS}
-    ${Boost_LIBRARIES} ${AVCODEC_LIBRARIES}
-)
 SET( INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
 
 

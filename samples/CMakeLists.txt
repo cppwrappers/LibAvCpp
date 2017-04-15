@@ -31,17 +31,17 @@ if( ${LIBAO_FOUND} )
     target_link_libraries(ao_play avcpp ${LIBAO_LIBRARIES} ${LIBS})
 endif()
 
-find_package(SDL)
+#find_package(SDL)
 #if( ${SDL_FOUND} )
-    include_directories(${ROOT} ${INCLUDES} ${SDL_INCLUDE_DIR})
-    add_executable(sdl_play play_sdl.cpp)
-    target_link_libraries(sdl_play avcpp ${LIBS} ${SDL_LIBRARIES})
+#    include_directories(${ROOT} ${INCLUDES} ${SDL_INCLUDE_DIR})
+#    add_executable(sdl_play play_sdl.cpp)
+#    target_link_libraries(sdl_play avcpp ${LIBS} ${SDL_LIBRARIES})
 #endif()
 
 message( "INCLUDES:" ${INCLUDES} )
 include_directories(${ROOT} ${INCLUDES} )
 add_executable( metadata metadata.cpp )
-target_link_libraries(metadata avcpp ${LIBS} -lpcrecpp -lpthread -luuid -lswresample -lm -lz)
+target_link_libraries(metadata avcpp ${LIBS} -lpcrecpp -lpthread -lswresample -lm -lz)
 
 ## -------------------------------------------------------------------------
 ## -----------------------        Test Code          -----------------------

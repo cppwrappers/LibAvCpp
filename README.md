@@ -1,15 +1,15 @@
-[![Build Status](https://travis-ci.org/cppwrappers/LibAvCpp.svg?branch=master)](https://travis-ci.org/cppwrappers/LibAvCpp)
+# libavcpp #
+## C++ Wrapper for FFmpeg library
 
-![ffmpeg logo](https://trac.ffmpeg.org/ffmpeg-logo.png)
-# C++ Wrapper for FFmpeg library
+[![Build Status](https://travis-ci.org/cppwrappers/LibAvCpp.svg?branch=master)](https://travis-ci.org/cppwrappers/LibAvCpp)
 
 ## Inlcude in your project:
 
 
-## Usage:
+### Usage:
 
 
-Open a file and get stream information:
+####Open a file and get stream information:
 
 ```c++
 #include "../libavcpp/format.h"
@@ -24,6 +24,6 @@ if( ! _code ) {
 }
 ```
 
-## License
+### License
 
 LibAvCpp is licensed under the [GNU Lesser General Public License v3.0](https://www.gnu.org/licenses/lgpl-3.0.txt).

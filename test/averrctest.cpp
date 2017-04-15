@@ -23,6 +23,8 @@
 
 #include <gtest/gtest.h>
 
+#include "_testconstants.h"
+
 namespace av {
 
 TEST( LiabavErrcTest, err_condition ) {
@@ -31,16 +33,13 @@ TEST( LiabavErrcTest, err_condition ) {
     EXPECT_EQ( "No such file or directory", errc.message() );
 }
 
-TEST( LibavErrcTest, errc ) {
-    std::string filename = "/home/e3a/testfiles/sample.flac";
+TEST( LiabavErrcTest, errc ) {
+    Format _format = Format( FILE_SAMPLE_MP3 );
+    EXPECT_FALSE( _format );
+    EXPECT_EQ( "Success", _format.errc().message() );
 
-    Format _format;
-    std::error_code errc = _format.open( filename.c_str() );
-    ASSERT_FALSE( errc );
-    ASSERT_EQ( "Success", errc.message() );
-
-    errc = _format.open( "dum_trala.mp3" );
-    ASSERT_EQ( ENOENT, errc.value() );
-    ASSERT_EQ( "No such file or directory", errc.message() );
+    _format = Format ( "dum_trala.mp3" );
+    EXPECT_FALSE( !_format );
+    EXPECT_EQ( "No such file or directory", _format.errc().message() );
 }
 }//namespace av

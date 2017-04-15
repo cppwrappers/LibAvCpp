@@ -68,6 +68,6 @@ std::vector< Metadata::Enum > Metadata::tag_names () {
     return _keys;
 }
 std::string Metadata::name ( Enum tag ) {
-    return _tag_names[ static_cast< int > ( tag )];
+    return _tag_names[ static_cast< unsigned int > ( tag )];
 }
 }//namespace libav

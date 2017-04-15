@@ -6,10 +6,10 @@
 ## Inlcude in your project:
 
 
-### Usage:
+## Usage:
 
 
-####Open a file and get stream information:
+###Open a file and get stream information:
 
 ```c++
 #include "../libavcpp/format.h"

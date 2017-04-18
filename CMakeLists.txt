@@ -14,7 +14,7 @@ option(build_tests "Build all unit tests." OFF)
 option(build_samples "Build samples." OFF)
 option(build_documentation "Build the project documentation." OFF)
 
-SET(TESTFILES "/home/e3a/testfiles" CACHE TESTFILES "The path to the testfiles.")
+SET(TESTFILES "/testfiles" CACHE TESTFILES "The path to the testfiles.")
 
 # -------------------------------------------------------------------------
 # -----------------------   Config Toolchain        -----------------------
@@ -52,12 +52,12 @@ endif()
 # -----------------------   Doxygen                 -----------------------
 # -------------------------------------------------------------------------
 if( build_documentation )
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM
-)
-endif(DOXYGEN_FOUND)
+    find_package(Doxygen)
+    if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+    endif(DOXYGEN_FOUND)
 endif()

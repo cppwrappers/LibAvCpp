@@ -29,6 +29,8 @@ addons:
     - libavfilter-dev
     - libavformat-dev
     - libavresample-dev
+    - libboost-dev
+
 matrix:
   include:
     - compiler: gcc
@@ -42,6 +44,7 @@ matrix:
 	    - libavfilter-dev
 	    - libavformat-dev
 	    - libavresample-dev
+    	    - libboost-dev
       env: COMPILER=g++-4.9
     - compiler: gcc
       addons:
@@ -54,6 +57,7 @@ matrix:
 	    - libavfilter-dev
 	    - libavformat-dev
 	    - libavresample-dev
+    	    - libboost-dev
       env: COMPILER=g++-5
     - compiler: clang
       addons:
@@ -67,6 +71,7 @@ matrix:
 	    - libavfilter-dev
 	    - libavformat-dev
 	    - libavresample-dev
+    	    - libboost-dev
       env: COMPILER=clang++-3.6
     - compiler: clang
       addons:
@@ -80,4 +85,5 @@ matrix:
 	    - libavfilter-dev
 	    - libavformat-dev
 	    - libavresample-dev
+    	    - libboost-dev
       env: COMPILER=clang++-3.7

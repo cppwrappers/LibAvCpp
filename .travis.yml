@@ -38,6 +38,10 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
+	    - libavcodec-dev
+	    - libavfilter-dev
+	    - libavformat-dev
+	    - libavresample-dev
       env: COMPILER=g++-4.9
     - compiler: gcc
       addons:
@@ -46,6 +50,10 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
+	    - libavcodec-dev
+	    - libavfilter-dev
+	    - libavformat-dev
+	    - libavresample-dev
       env: COMPILER=g++-5
     - compiler: clang
       addons:
@@ -55,6 +63,10 @@ matrix:
             - llvm-toolchain-precise-3.6
           packages:
             - clang-3.6
+	    - libavcodec-dev
+	    - libavfilter-dev
+	    - libavformat-dev
+	    - libavresample-dev
       env: COMPILER=clang++-3.6
     - compiler: clang
       addons:
@@ -64,4 +76,8 @@ matrix:
             - llvm-toolchain-precise-3.7
           packages:
             - clang-3.7
+	    - libavcodec-dev
+	    - libavfilter-dev
+	    - libavformat-dev
+	    - libavresample-dev
       env: COMPILER=clang++-3.7

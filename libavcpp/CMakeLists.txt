@@ -24,6 +24,10 @@ aux_source_directory( ${PROJECT_SOURCE_DIR} LIBAVCPP_SOURCES )
 
 add_library( avcpp SHARED ${LIBAVCPP_SOURCES} )
 target_link_libraries(avcpp ${LIBS})
+install (TARGETS avcpp
+         ARCHIVE DESTINATION lib
+         LIBRARY DESTINATION lib
+         RUNTIME DESTINATION bin)
 
 #add headers for editor
 FILE(GLOB_RECURSE HeaderFiles "${PROJECT_SOURCE_DIR}/*.h")

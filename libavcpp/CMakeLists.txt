@@ -22,12 +22,8 @@ SET( INCLUDES   ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
 include_directories(${ROOT} ${INCLUDES})
 aux_source_directory( ${PROJECT_SOURCE_DIR} LIBAVCPP_SOURCES )
 
-add_library( avcpp SHARED ${LIBAVCPP_SOURCES} )
+add_library( avcpp ${LIBAVCPP_SOURCES} )
 target_link_libraries(avcpp ${LIBS})
-install (TARGETS avcpp
-         ARCHIVE DESTINATION lib
-         LIBRARY DESTINATION lib
-         RUNTIME DESTINATION bin)
 
 #add headers for editor
 FILE(GLOB_RECURSE HeaderFiles "${PROJECT_SOURCE_DIR}/*.h")

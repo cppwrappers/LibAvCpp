@@ -9,66 +9,52 @@
 #include "_constants.h"
 #include "format.h"
 
-namespace av {
 ///@cond DOC_INTERNAL
-struct __codec_context;
+extern "C" {
+struct AVCodecContext;
+}
 ///@endcond DOC_INTERNAL
+
+namespace av {
 
 /** @brief The Codec struct */
 struct Codec {
 
-    Codec() : index_( -1 ) {}
-    Codec( int index, std::shared_ptr< __codec_context > context ) : index_(index), codec_context_( context ) {}
-    Codec( int index, Codec& codec, options_t options = options_t() );
-    Codec( int index, Format& format_context, CODEC::Enum codec, options_t options );
+    /** create input codec */
 
-    Codec(const Codec&) = default;
-    Codec& operator=(const Codec&) = default;
-    Codec(Codec&&) = default;
-    Codec& operator=(Codec&&) = default;
+    Codec( Format& format_context, CODEC::Enum codec, options_t options );
 
-    ~Codec() {}
-
-    int index() const
-    { return index_; }
+    Codec( const Codec& codec ) = delete;
+    Codec& operator=(const Codec& codec) = delete;
+    Codec(Codec&&);
+    Codec& operator=(Codec&&);
+    ~Codec();
 
     CODEC_TYPE::Enum codec_type() const;
     CODEC::Enum codec() const;
     int bitrate() const;
-    int samplerate() const;
+    int sample_rate() const;
     int channels() const;
     int bits_per_sample() const;
     int width() const;
     int height() const;
     int pixel_format() const;
-    SampleFormat sample_format() const;
+    SampleFormat sample_fmt() const;
 
-    /**
-     * @brief Checks whether the codec has no errors.
-     * Returns true if an error has occurred on the associated codec context.
+
+    /** \brief Number of samples per channel in an audio frame.
+    encoding: set by libavcodec in avcodec_open2(). Each submitted frame except the last must contain exactly frame_size samples per channel.
+              May be 0 when the codec has CODEC_CAP_VARIABLE_FRAME_SIZE set, then the frame size is not restricted.
+    decoding: may be set by some decoders to indicate constant frame size
+    */
+    int frame_size();
+    /** \brief Audio channel layout.
+    encoding: set by user.
+    decoding: set by user, may be overwritten by libavcodec.
      */
-    explicit operator bool() const;
-    /**
-     * @brief checks if an error has occurred.
-     * Returns true if an error has occurred on the associated codec context.
-     * @return true if an error has occurred, false otherwise.
-     */
-    bool operator!() const;
-    /**
-     * @brief checks if no error has occurred.
-     * @return
-     */
-    bool good();
-    /**
-     * @brief checks if an error has occurred
-     * @return
-     */
-    bool fail();
-    /**
-     * @brief return the actual error state of the assiciated codec context.
-     * @return return the error state as std::error_code.
-     */
-    std::error_code errc ();
+    uint64_t channel_layout();
+
+
 
     /**
      * @brief write the codec definitions to the output stream.
@@ -78,7 +64,7 @@ struct Codec {
      */
     friend std::ostream& operator<< ( std::ostream& stream, const Codec& codec ) {
         stream << name( codec.codec_type() ) << ":" << name( codec.codec() ) <<  " (" << codec.bitrate() << " kb/s, " <<
-               codec.samplerate() << " hz, " << codec.channels() << " channel(s), " <<
+               codec.sample_rate() << " hz, " << codec.channels() << " channel(s), " <<
                codec.bits_per_sample() << " bps, " <<
                codec.width() << "x" << codec.height() << " px)";
         return stream;
@@ -93,10 +79,13 @@ struct Codec {
     }
 
 private:
-    friend class Packet;
-    int index_;
-    std::error_code errc_;
-    std::shared_ptr< __codec_context > codec_context_ = nullptr;
+    friend class AudioFifo;
+    friend class Format;
+    std::error_code errc_; //TODO
+    Codec( AVCodecContext* codec, options_t options );
+    AVCodecContext* codec_context_ = nullptr;
+
+    /* some helper methods */
     static std::array< std::string, 4 > codec_names_;
     static std::array< std::string, 6 > codec_type_names_;
     static std::string name ( CODEC::Enum codec );

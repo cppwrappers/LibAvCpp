@@ -1,40 +1,59 @@
+/*          Copyright Etienne Knecht 2017 - 2019.
+ * Distributed under the Boost Software License, Version 1.0.
+ *    (See accompanying file LICENSE_1_0.txt or copy at
+ *          http://www.boost.org/LICENSE_1_0.txt)
+ */
 #include "packet.h"
 
-#include "__avformat.h"
-#include "averrc.h"
+extern "C" {
+#include "libavformat/avformat.h"
+#include "libavformat/avio.h"
+#include "libavcodec/avcodec.h"
+#include "libavutil/audio_fifo.h"
+#include "libavutil/avassert.h"
+#include "libavutil/avstring.h"
+#include "libavutil/frame.h"
+#include "libavutil/opt.h"
+#include "libswresample/swresample.h"
+
+#ifdef __cplusplus
+#define __STDC_CONSTANT_MACROS
+#ifdef _STDINT_H
+#undef _STDINT_H
+#endif
+# include <stdint.h>
+#endif
+}
 
 namespace av {
 
-int Packet::stream_index ()
-{ return packet_->packet_->stream_index; }
-
-Packet& Packet::decode( Codec& codec, Frame& frame ) {
-
-    frame.frame_->decode( codec.codec_context_->codec_context_, packet_->packet_ );
-//    frame.frame_ = std::make_shared< __av_frame >(
-//        codec.codec_context_->codec_context_, packet_->packet_ );
-
-    if( !frame.frame_->data_present )
-    { errc_ = make_error_code( AV_EOF ); }
-    if( frame.frame_->error < 0 )
-    { errc_ = make_error_code( frame.frame_->error ); }
-
-    return *this;
+Packet::Packet () : packet_( new AVPacket() ) {
+    av_init_packet ( packet_ );
+    packet_->data = NULL;
+    packet_->size = 0;
+}
+Packet::~Packet() {
+    av_free_packet ( packet_ );
+    delete packet_;
 }
 
-int64_t Packet::pos() {
-    return packet_->packet_->pos;
-}
-
-bool Packet::operator!() const
-{ return ( !errc_ ); }
-bool Packet::good()
-{ return errc_.value() == 0; }
-bool Packet::eof()
-{ return errc_.value() == AV_EOF; }
-bool Packet::fail()
-{ return !errc_ && errc_.value() != AV_EOF; }
-std::error_code Packet::errc ()
-{ return errc_; }
+int64_t Packet::pts()
+{ return packet_->pts; }
+int64_t Packet::dts()
+{ return packet_->dts; }
+uint8_t* Packet::data()
+{ return packet_->data; }
+int Packet::size()
+{ return packet_->size; }
+size_t Packet::stream_index ()
+{ return static_cast< size_t >( packet_->stream_index ); }
+int Packet::flags()
+{ return packet_->flags; }
+int Packet::duration()
+{ return packet_->duration; }
+int64_t Packet::pos()
+{ return packet_->pos; }
+int64_t Packet::convergence_duration()
+{ return packet_->convergence_duration; }
 
 }//namespace av

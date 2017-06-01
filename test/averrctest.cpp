@@ -34,12 +34,12 @@ TEST( LiabavErrcTest, err_condition ) {
 }
 
 TEST( LiabavErrcTest, errc ) {
-    Format _format = Format( FILE_SAMPLE_MP3 );
-    EXPECT_FALSE( _format );
-    EXPECT_EQ( "Success", _format.errc().message() );
+    Format _format_simple_mp3( FILE_SAMPLE_MP3 );
+    EXPECT_FALSE( _format_simple_mp3 );
+    EXPECT_EQ( "Success", _format_simple_mp3.errc().message() );
 
-    _format = Format ( "dum_trala.mp3" );
-    EXPECT_FALSE( !_format );
-    EXPECT_EQ( "No such file or directory", _format.errc().message() );
+    Format _format_false( "dum_trala.mp3" );
+    EXPECT_FALSE( !_format_false );
+    EXPECT_EQ( "No such file or directory", _format_false.errc().message() );
 }
 }//namespace av

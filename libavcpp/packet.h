@@ -1,101 +1,104 @@
+/*          Copyright Etienne Knecht 2017 - 2019.
+ * Distributed under the Boost Software License, Version 1.0.
+ *    (See accompanying file LICENSE_1_0.txt or copy at
+ *          http://www.boost.org/LICENSE_1_0.txt)
+ */
 #ifndef PACKET_H
 #define PACKET_H
 
 #include <memory>
-#include <system_error>
 
-#include "codec.h"
-#include "frame.h"
+///@cond DOC_INTERNAL
+extern "C" {
+struct AVPacket;
+}
+///@endcond DOC_INTERNAL
 
-/** @brief libavcpp namespace. */
+/** \brief av namespace. */
 namespace av {
-struct __av_packet;
-struct __av_frame;
 
+/**
+@brief This structure stores compressed data.
+<p>It is typically exported by demuxers and then passed as input to decoders, or received as output from encoders and then passed to muxers.<br/>
+For video, it should typically contain one compressed frame. For audio it may contain several compressed frames.<br/></p>
+
+<p><strong>AVPacket is one of the few structs in FFmpeg, whose size is a part of public ABI. Thus it may be allocated on stack and no new fields
+can be added to it without libavcodec and libavformat major bump.<br/>
+The semantics of data ownership depends on the buf or destruct (deprecated) fields. If either is set, the packet data is dynamically allocated
+and is valid indefinitely until av_free_packet() is called (which in turn calls av_buffer_unref()/the destruct callback to free the data).
+If neither is set, the packet data is typically backed by some static buffer somewhere and is only valid for a limited time (e.g. until the
+next read call when demuxing).<br/>
+The side data is always allocated with av_malloc() and is freed in av_free_packet().</strong></p>
+ */
 class Packet {
 public:
-    friend class Frame;
-    friend class Format;
 
-    Packet() {}
-    Packet( std::shared_ptr< __av_packet > packet ) : packet_( packet ) {}
-//    Packet( Format& format_context );
+    Packet();
+    Packet(const Packet&) = delete;
+    Packet& operator=(const Packet&) = delete;
+    Packet(Packet&&) = delete;
+    Packet& operator=(Packet&&) = delete;
+    ~Packet();
 
-//    AVBufferRef * 	buf
-//        A reference to the reference-counted buffer where the packet data is stored. More...
+    /**
+     \brief Presentation timestamp in AVStream->time_base units; the time at which the decompressed packet will be presented to the user.
+     <p>Can be AV_NOPTS_VALUE if it is not stored in the file. pts MUST be larger or equal to dts as presentation cannot happen before
+        decompression, unless one wants to view hex dumps. Some formats misuse the terms dts and pts/cts to mean something different.
+        Such timestamps must be converted to true pts/dts before they are stored in AVPacket.</p>
+     */
+    int64_t pts();
 
-//    int64_t 	pts
-//        Presentation timestamp in AVStream->time_base units; the time at which the decompressed packet will be presented to the user. More...
+    /**
+     \brief Decompression timestamp in AVStream->time_base units; the time at which the packet is decompressed.
+     <p>Can be AV_NOPTS_VALUE if it is not stored in the file.</p>
+     */
+    int64_t dts();
 
-//    int64_t 	dts
-//        Decompression timestamp in AVStream->time_base units; the time at which the packet is decompressed. More...
+    /** \brief Frame raw data. */
+    uint8_t* data();
 
-//    uint8_t * 	data
+    /** \brief Frame raw data size. */
+    int size();
 
-//    int 	size
+    //TODO get codec directly
+    /** \brief the stream index for this packt. */
+    size_t stream_index();
 
-    int stream_index();
+    /** \brief A combination of AV_PKT_FLAG values. */
+    int flags();
 
-//    int 	flags
-//        A combination of AV_PKT_FLAG values. More...
+    /**
+     \brief Additional packet data that can be provided by the container.
+     <p>Packet can contain several types of side information.</p>
+     */
+//TODO    AVPacketSideData * 	side_data
 
-//    AVPacketSideData * 	side_data
-//        Additional packet data that can be provided by the container. More...
 
-//    int 	side_data_elems
+    /** \brief side data elemnt count. */
+//TODO    int 	side_data_elems
 
-//    int 	duration
-//        Duration of this packet in AVStream->time_base units, 0 if unknown. More...
+    /**
+     \brief Duration of this packet in AVStream->time_base units, 0 if unknown.
+     <p>Equals next_pts - this_pts in presentation order.</p>
+    */
+    int duration();
 
-//    attribute_deprecated void(* 	destruct )(struct AVPacket *)
-
-//    attribute_deprecated void * 	priv
-
-    /** @brief byte position in stream, -1 if unknown */
+    /** \brief byte position in stream, -1 if unknown */
     int64_t pos();
 
-//    int64_t 	convergence_duration
-//        Time difference in AVStream->time_base units from the pts of this packet to the point at which the output from the decoder has converged independent from the availability of previous frames. More...
-
-
     /**
-     * @brief decode a frame from the assoissiated packet.
-     * @param codec the codec to use.
-     * @param frame the frame to store the decoded media data.
+     \brief Time difference in AVStream->time_base units from the pts of this packet to the point at which the output from the decoder has converged independent from the availability of previous frames.
+     <p>That is, the frames are virtually identical no matter if decoding started from the very first frame or from this keyframe. Is AV_NOPTS_VALUE if unknown.
+        This field is not the display duration of the current packet. This field has no meaning if the packet does not have AV_PKT_FLAG_KEY set.<br/>
+        The purpose of this field is to allow seeking in streams that have no keyframes in the conventional sense. It corresponds to the recovery point SEI
+        in H.264 and match_time_delta in NUT. It is also essential for some types of subtitle streams to ensure that all subtitles are correctly displayed after seeking.</p>
      * @return
      */
-    Packet& decode( Codec& codec, Frame& frame );
-
-    /**
-     * @brief checks if an error has occurred.
-     * Returns true if an error has occurred on the associated packet.
-     * @return true if an error has occurred, false otherwise.
-     */
-    bool operator!() const;
-    /**
-     * @brief checks if no error has occurred i.e. I/O operations are available
-     * @return
-     */
-    bool good();
-    /**
-     * @brief checks if end-of-file has been reached
-     * @return
-     */
-    bool eof();
-    /**
-     * @brief checks if an error has occurred
-     * @return
-     */
-    bool fail();
-    /**
-     * @brief return the actual error state of the assiciated packet.
-     * @return return the error state as std::error_code.
-     */
-    std::error_code errc ();
+    int64_t convergence_duration();
 
 private:
-    std::error_code errc_;
-    std::shared_ptr< __av_packet > packet_;
+    friend class Format;
+    AVPacket* packet_;
 };
 }//namespace av
 #endif // PACKET_H

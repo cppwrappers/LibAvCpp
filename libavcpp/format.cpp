@@ -57,47 +57,21 @@ Format::Format( std::iostream& stream, Mode mode, options_t options ) {
 
 Format::~Format() {}
 
-std::vector< std::shared_ptr< Codec > >::iterator Format::begin() {
+const std::vector< Codec >::iterator Format::begin() {
     return codecs_.begin();
 }
 
-std::vector< std::shared_ptr< Codec > >::iterator Format::end() {
+const std::vector< Codec >::iterator Format::end() {
     return codecs_.end();
 }
-
-//std::vector< std::shared_ptr< __codec_context > >::iterator Format::find( CODEC_TYPE::Enum codec_type, int start_pos ) {
-//    for(unsigned short i=0; i<format_context_->format_context_->nb_streams; i++) {
-//        if( codec_type == CODEC_TYPE::NONE ||
-//            codec_type == format_context_->format_context_->streams[i]->codec->codec_type ) { //TODO CONVERT ONE
-//            std::shared_ptr< __codec_context > _codec = std::make_shared< __codec_context >(
-//                                    format_context_->format_context_->streams[i]->codec );
-//            codecs_.push_back( _codec );
-//        }
-//    }
-//    return codecs_.begin();
-//}
-
-//std::vector< Codec >::iterator find( std::vector< Codec >::iterator, int pos = 0 ) {
-//    return _codec.find();
-//}
-
-//std::vector< Codec > Format::find( CODEC_TYPE::Enum codec_type ) const {
-
-//    std::vector< Codec > _codecs;
-//    for(unsigned short i=0; i<format_context_->format_context_->nb_streams; i++) {
-//        if( codec_type == CODEC_TYPE::NONE ||
-//            codec_type == format_context_->format_context_->streams[i]->codec->codec_type ) { //TODO CONVERT ONE
-//            std::shared_ptr< __codec_context > _codec = std::make_shared< __codec_context >(
-//                                    format_context_->format_context_->streams[i]->codec );
-//            Codec _codec_ptr( _codec );
-//            _codecs.push_back( _codec_ptr );
-//        }
-//    }
-////    auto it = std::iterator<std::input_iterator_tag, Codec>( &_codecs );
-//    decltype(_codecs.begin()) codec_itr_t = _codecs.begin();
-////    codec_itr_t std::iterator<Codec> _it = _codecs.begin();
-//    return _codecs;
-//}
+const std::vector< Codec >::iterator Format::find_codec( CODEC_TYPE::Enum type ) {
+    for (auto _itr_codec = codecs_.begin(); _itr_codec != codecs_.end(); ++_itr_codec ) {
+            if ( _itr_codec->codec_type() == type ) {
+                return _itr_codec;
+            }
+        }
+        return codecs_.end();
+}
 
 av::Metadata Format::metadata() const {
     av::Metadata _metadata;
@@ -165,19 +139,69 @@ uint64_t Format::playtime() const {
 }
 
 Format& Format::read( Packet& packet ) {
-    int err;
-    packet.packet_ = std::make_shared< __av_packet >( format_context_->read_packet( &err ) );
-    if( err < 0 ) errc_ = make_error_code( err );
+    int _err = 0;
+    if ( ( _err  = av_read_frame( format_context_->format_context_, packet.packet_ ) ) < 0 ) {
+        errc_ = make_error_code( _err );
+    }
     return *this;
+}
+Format& Format::read( std::vector< Codec >::iterator itr, Packet& packet ) {
+    int _err = 0;
+    do {
+        if ( ( _err  = av_read_frame( format_context_->format_context_, packet.packet_ ) ) < 0 ) {
+            errc_ = make_error_code( _err );
+        }
+    } while( !_err && ( itr - codecs_.begin() ) != packet.stream_index() );
+    return *this;
+}
+
+Format& Format::write( Packet& packet ) {
+    int error;
+    if ( ( error = av_write_frame(format_context_->format_context_, packet.packet_ ) ) < 0)
+    { errc_ = std::error_code( error, av_category ); }
+    return *this;
+}
+
+std::error_code Format::decode( Packet& packet, Frame& frame) {
+
+    int data_present = 0, error = 0;
+    error = avcodec_decode_audio4(
+                codecs_.at( packet.stream_index() ).codec_context_,
+                frame.frame_,
+                &data_present,
+                packet.packet_ );
+
+    if( error < 0 )
+    { return make_error_code( error ); }
+    if( !data_present )
+    { return make_error_code( AV_EOF ); }
+    return std::error_code();
+}
+
+std::error_code Format::encode( Codec& codec, Frame& frame, std::function< void( Packet& packet ) > fnc ) {
+
+    Packet packet_;
+    int error, data_present = 0;
+
+    /** Set a timestamp based on the sample rate for the container. */
+    frame.pts( pts );
+    pts += frame.nb_samples();
+
+    /**
+     * Encode the audio frame and store it in the temporary packet.
+     * The output audio stream encoder is used to do this.
+     */
+    if ((error = avcodec_encode_audio2( codec.codec_context_, packet_.packet_, frame.frame_, &data_present)) < 0)
+    { return std::error_code( error, av_category ); }
+
+    fnc( packet_ );
+    return std::error_code();
 }
 
 void Format::load_codecs() {
     codecs_.clear();
     for(unsigned short i=0; i<format_context_->format_context_->nb_streams; i++) {
-        std::shared_ptr< __codec_context > _codec = std::make_shared< __codec_context >(
-                                format_context_->format_context_->streams[i]->codec );
-        auto _codec_ptr = std::make_shared< Codec >( i, _codec );
-        codecs_.push_back( _codec_ptr );
+        codecs_.push_back( Codec( format_context_->format_context_->streams[i]->codec, options_t() /*TODO */ ) );
     }
 }
 

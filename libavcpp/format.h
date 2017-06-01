@@ -12,13 +12,14 @@
 #include "averrc.h"
 #include "metadata.h"
 #include "option.h"
+#include "frame.h"
 
 /** @brief libavcpp namespace. */
 namespace av {
 
 ///@cond DOC_INTERNAL
 class IoContext;
-class Codec;
+struct Codec;
 class Packet;
 
 class CodecIterator : public std::iterator<std::input_iterator_tag, int> {
@@ -33,6 +34,8 @@ public:
   int& operator*() {return *p;}
 };
 ///@endcond DOC_INTERNAL
+
+typedef std::shared_ptr< Codec > codec_ptr;
 
 /** @brief format of mediafile.
 
@@ -51,7 +54,7 @@ int main ( int argc, char *argv[] ) {
     }
 
     for( auto& __stream : _format.find() ) {
-        if(__stream.codec_type() == CODEC_TYPE::AUDIO ) {
+        if( __stream.codec_type() == CODEC_TYPE::AUDIO ) {
             ... select stream ...
         }
     }
@@ -66,7 +69,7 @@ streams of the format can be accessed with the find method. By passing a CODEC_T
 <code>
 av::Packet packet;
 
-while( !!format.read( packet ) ) {
+while( !format.read( packet ) ) {
     ... packet ...
 }
 </code>
@@ -96,8 +99,9 @@ public:
     /** @brief DTOR */
     ~Format();
 
-    std::vector< std::shared_ptr< Codec > >::iterator begin();
-    std::vector< std::shared_ptr< Codec > >::iterator end();
+    const std::vector< Codec >::iterator begin();
+    const std::vector< Codec >::iterator end();
+    const std::vector< Codec >::iterator find_codec( CODEC_TYPE::Enum type );
 
     /**
      * @brief returns the metadata of the associated format context.
@@ -109,19 +113,20 @@ public:
      * @return play length in milliseconds.
      */
     uint64_t playtime() const;
-    /**
-     * @brief read a packet from the associated format context.
-     * @param packet the packet to associate the data to.
-     * @return self for checking state.
-     */
-    Format& read( Packet& packet );
-//    /**
-//     * @brief decode a frame from the assoissiated packet.
-//     * @param codec the codec to use.
-//     * @param frame the frame to store the decoded media data.
-//     * @return
-//     */
-//    Format& decode( Packet& packet, Codec&, Frame& );
+
+    /** @brief Read a packet from the associated format context. */
+    Format& read( Packet& packet /** @param packet the packet to associate the data to. */ );
+
+    Format& read( std::vector< Codec >::iterator codec, Packet& packet );
+
+//    Format& read( std::function< void( Codec& codec, Packet& packet ) > fnc );
+//    Format& read( std::vector< Codec >::iterator codec, std::function< void( Codec& codec, Packet& packet ) > fnc );
+
+    Format& write( Packet& packet );
+
+    std::error_code decode( Packet& packet, Frame& frame);
+//    std::error_code decode( Codec& codec, Packet& packet, std::function< void( Frame& frame ) > fnc );
+    std::error_code encode( Codec& codec, Frame& frame, std::function< void( Packet& packet ) > fnc );
 
     /**
      * @brief checks if an error has occurred.
@@ -151,11 +156,12 @@ public:
     std::error_code errc ();
 
 private:
-    friend class Codec;
+    friend struct Codec;
     std::error_code errc_;
-    std::vector< std::shared_ptr< Codec > > codecs_;
+    /** Global timestamp for the audio frames */
+    int64_t pts = 0;
+    std::vector< Codec > codecs_;
     std::shared_ptr< __av_format_context > format_context_ = nullptr;
-
     void load_codecs();
 };
 }//namespace av

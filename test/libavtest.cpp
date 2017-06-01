@@ -27,40 +27,6 @@
 
 //namespace libav {
 
-//TEST_F( LibavTest, open_audio_file_metadata_stream ) {
-//    std::string filename = std::string( TESTFILES ) + "BIS1536-001-flac_16-nocover.flac";
-
-//    LibAv _audio;
-//    std::fstream _fs ( filename );
-//    ASSERT_FALSE( _audio.input( &_fs ) );
-
-//    EXPECT_EQ ( 1, _audio.nb_streams() );
-//    MediaInfo _type = _audio.media_info( 0 );
-//    EXPECT_EQ ( 1, _audio.nb_streams() );
-//    EXPECT_EQ ( MediaType::AUDIO, _type.type );
-//    EXPECT_EQ ( Codec::FLAC, _type.codec );
-//    EXPECT_EQ ( 0, _type.bitrate );
-//    EXPECT_EQ ( 44100, _type.samplerate );
-//    EXPECT_EQ ( 2, _type.channels );
-//    EXPECT_EQ ( 205, _type.playtime );
-//    EXPECT_EQ ( 16, _type.bits_per_sample );
-//    EXPECT_EQ ( 0, _type.width );
-//    EXPECT_EQ ( 0, _type.height );
-
-//    EXPECT_EQ ( 11U, _type.metadata.tag_names().size() );
-//    EXPECT_EQ ( "Victorious Love - Carolyn Sampson sings Purcell", _type.metadata.get( Metadata::ALBUM ) );
-//    EXPECT_EQ ( "Sampson, Carolyn;Cummings, Laurence;Kenny, Elizabeth;Lasla, Anne-Marie", _type.metadata.get( Metadata::ARTIST ) );
-//    EXPECT_EQ ( "Downloaded from eClassical.com. From album BIS-SACD-1536", _type.metadata.get( Metadata::COMMENT ) );
-//    EXPECT_EQ ( "Purcell, Henry", _type.metadata.get( Metadata::COMPOSER ) );
-//    EXPECT_EQ ( "1/1", _type.metadata.get( Metadata::DISC) );
-//    EXPECT_EQ ( "(32)Vocal/Choral;(32)Baroque", _type.metadata.get( Metadata::GENRE ) );
-//    EXPECT_EQ ( "Sampson, Carolyn;Cummings, Laurence;Kenny, Elizabeth;Lasla, Anne-Marie", _type.metadata.get( Metadata::PERFORMER ) );
-//    EXPECT_EQ ( "BIS;eClassical", _type.metadata.get( Metadata::PUBLISHER ) );
-//    EXPECT_EQ ( "(Sweeter than roses, Z.585 No.1) - Sweeter than roses, Z.585 No.1", _type.metadata.get( Metadata::TITLE ) );
-//    EXPECT_EQ ( "1/19", _type.metadata.get( Metadata::TRACK ) );
-//    EXPECT_EQ ( "2007-08-30", _type.metadata.get( Metadata::YEAR ) );
-//}
-
 //TEST_F( LibavTest, transcode_file_stream ) {
 
 //    { //Transcode

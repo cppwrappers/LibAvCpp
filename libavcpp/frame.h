@@ -3,15 +3,20 @@
 
 #include <memory>
 
-namespace av {
 ///@cond DOC_INTERNAL
-struct __av_frame;
+extern "C" {
+struct AVFrame;
+}
 ///@endcond DOC_INTERNAL
-class Frame {
+
+namespace av {
+struct Codec;
+struct Frame {
 public:
     Frame();
-    Frame( std::shared_ptr< __av_frame > frame ) : frame_( frame ) {}
-    ~Frame() {}
+    Frame( Codec& codec, const int framesize );
+
+    ~Frame();
 
 //    uint8_t* data [AV_NUM_DATA_POINTERS]
 //        pointer to the picture/channel planes. More...
@@ -56,8 +61,12 @@ public:
 //    AVRational 	sample_aspect_ratio
 //        Sample aspect ratio for the video frame, 0/1 if unknown/unspecified. More...
 
-//    int64_t 	pts
-//        Presentation timestamp in time_base units (time when frame should be shown to user). More...
+    /** \brief Presentation timestamp in time_base units (time when frame should be shown to user). */
+    int64_t pts();
+    /** \brief Set presentation timestamp in time_base units. */
+    void pts( int64_t _pts );
+
+//         More...
 
 //    int64_t 	pkt_pts
 //        PTS copied from the AVPacket that was decoded to produce this frame. More...
@@ -150,8 +159,8 @@ public:
 //    AVBufferRef ** 	extended_buf
 //        For planar audio which requires more than AV_NUM_DATA_POINTERS AVBufferRef pointers, this array will hold all the references which cannot fit into AVFrame.buf. More...
 
-//    int 	nb_extended_buf
-//        Number of elements in extended_buf. More...
+    /** \brief Number of elements in extended_buf. */
+    int nb_extended_buf() const;
 
 //    AVFrameSideData ** 	side_data
 
@@ -183,15 +192,18 @@ public:
 
 //    int64_t 	pkt_duration
 //        duration of the corresponding packet, expressed in AVStream->time_base units, 0 if unknown. More...
+// Code outside libavutil should access this field using: av_frame_get_pkt_duration(frame)
 
 //    AVDictionary * 	metadata
 //        metadata. More...
+//Code outside libavutil should access this field using: av_frame_get_metadata(frame)
 
 //    int 	decode_error_flags
 //        decode error flags of the frame, set to a combination of FF_DECODE_ERROR_xxx flags if the decoder produced a frame, but there were errors during the decoding. More...
+//Code outside libavutil should access this field using: av_frame_get_decode_error_flags(frame)
 
-//    int 	channels
-//        number of audio channels, only used for audio. More...
+    /** \brief number of audio channels, only used for audio. */
+    int channels();
 
 //    int 	pkt_size
 //        size of the corresponding packet containing the compressed frame. More...
@@ -200,9 +212,9 @@ public:
 //        Not to be accessed directly from outside libavutil. More...
 
 private:
-    friend class Packet;
-    std::shared_ptr< __av_frame > frame_ = nullptr;
+    friend class Format;
+    friend class AudioFifo;
+    AVFrame* frame_ = nullptr;
 };
-typedef std::shared_ptr< Frame > frame_ptr;
 }//namespace av
 #endif // FRAME_H

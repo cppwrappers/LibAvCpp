@@ -6,21 +6,33 @@
 #include "_constants.h"
 #include "option.h"
 
-/** @brief libavcpp namespace. */
-namespace av {
 ///@cond DOC_INTERNAL
-struct __av_resample_context;
+extern "C" {
+struct SwrContext;
+}
 ///@endcond DOC_INTERNAL
 
-class Resample {
+/** @brief libavcpp namespace. */
+namespace av {
+struct Resample {
 public:
     Resample( int source_channels, SampleFormat source_sample_fmt, int source_sample_rate,
               int target_channels, SampleFormat target_sample_fmt, int target_sample_rate,
               options_t options );
     ~Resample();
+
+    Resample(const Resample&) = delete;
+    Resample& operator=(const Resample&) = delete;
+    Resample(Resample&&) = default;
+    Resample& operator=(Resample&&) = default;
+
+    int alloc_buffer( int channels, int frame_size, SampleFormat sample_fmt );
+
 private:
-    std::shared_ptr< __av_resample_context > resample_context_;
+    friend class AudioFifo;
+    int error;
+    SwrContext* resample_context_;
+    uint8_t **converted_input_samples = nullptr;
 };
-typedef std::shared_ptr< Resample > resample_ptr;
 }//namespace av
-#endif // RESAMPLE_H
+#endif //RESAMPLE_H

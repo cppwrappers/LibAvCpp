@@ -3,8 +3,6 @@
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          http://www.boost.org/LICENSE_1_0.txt)
  */
-#include "packet.h"
-
 extern "C" {
 #include "libavformat/avformat.h"
 #include "libavformat/avio.h"
@@ -24,6 +22,8 @@ extern "C" {
 # include <stdint.h>
 #endif
 }
+
+#include "packet.h"
 
 namespace av {
 

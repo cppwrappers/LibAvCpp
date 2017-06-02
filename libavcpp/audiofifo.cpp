@@ -20,8 +20,6 @@ extern "C" {
 #endif
 }
 
-// #include "__avformat.h";
-
 #include "averrc.h"
 
 namespace av {
@@ -40,30 +38,32 @@ AudioFifo& AudioFifo::write( Resample& resample, Frame& frame ) {
 
     int _error;
     //Initialize the temporary storage for the converted input samples.
-    uint8_t **converted_input_samples = nullptr;
-    if ( ! ( converted_input_samples = (uint8_t**)calloc( frame.channels(), sizeof( **converted_input_samples ) ) ) )
+    uint8_t* converted_input_samples = nullptr;
+    if ( ! ( converted_input_samples = static_cast< uint8_t* >( calloc( frame.channels(), sizeof( *converted_input_samples ) ) ) ) )
     { error_ = make_error_code( ENOMEM ); return *this; }
     else {
          //Allocate memory for the samples of all channels in one consecutive
          //block for convenience.
-        if ( ( _error = av_samples_alloc( converted_input_samples, NULL,
+        if ( ( _error = av_samples_alloc( &converted_input_samples, NULL,
                                       frame.channels(),
                                       frame.nb_samples(),
                                       static_cast< AVSampleFormat >( sample_format_ ), 0 ) ) < 0 ) {
-            av_freep(&(*converted_input_samples)[0]);
-            free(*converted_input_samples);
+            av_freep(&(converted_input_samples)[0]);
+            free(converted_input_samples);
             converted_input_samples = nullptr;
-            error_ = make_error_code( _error ); return *this;
+            error_ = make_error_code( _error );
+            return *this;
         }
     }
 
     //Convert the input samples to the desired output sample format.
     //This requires a temporary storage provided by converted_input_samples.
     if ( ( _error = swr_convert( resample.resample_context_,
-                                 converted_input_samples,
+                                 &converted_input_samples,
                                  frame.nb_samples(),
                                  (const uint8_t**)frame.nb_extended_buf(), frame.nb_samples() ) ) < 0 ) {
-        { error_ = make_error_code( _error ); return *this; }
+            error_ = make_error_code( _error );
+            return *this;
     }
 
     //Make the FIFO as large as it needs to be to hold both, the old and the new samples.
@@ -72,19 +72,19 @@ AudioFifo& AudioFifo::write( Resample& resample, Frame& frame ) {
     std::cout << "Fifo Size#: " << av_audio_fifo_size(fifo_) << std::endl;
     //Store the new samples in the FIFO buffer. */
     auto _nb_samples = frame.nb_samples();
-    if ( ( _error = av_audio_fifo_write(fifo_, (void **)converted_input_samples, _nb_samples ) ) < _nb_samples )
+
+    _error = av_audio_fifo_write(fifo_, (void **)&converted_input_samples, _nb_samples );
+    if ( _error < _nb_samples )
     { error_ = make_error_code( _error ); return *this; }
     return *this;
 }
-AudioFifo& AudioFifo::read( Codec& codec, std::function< void( Frame& frame ) > fnc ) {
+AudioFifo& AudioFifo::read( Frame& frame, const int frame_size ) {
     
-    const int frame_size = FFMIN(av_audio_fifo_size( fifo_ ), codec.frame_size() );
-    Frame output_frame( codec, frame_size );
+//    const int frame_size = FFMIN(av_audio_fifo_size( fifo_ ), codec.frame_size() );
+//    Frame output_frame( codec, frame_size );
 
-    if (av_audio_fifo_read(fifo_, (void **)output_frame.frame_->data, frame_size) < frame_size)
-    { error_ = make_error_code( AVERROR_EXIT ); return *this; }
-
-    fnc( output_frame );
+    if (av_audio_fifo_read(fifo_, (void **)frame.frame_->data, frame_size) < frame_size)
+    { error_ = make_error_code( AVERROR_EXIT ); }
     return *this;
 }
 int AudioFifo::nb_buffers()
@@ -99,6 +99,8 @@ SampleFormat AudioFifo::sample_fmt()
 {}
 int AudioFifo::sample_size()
 {}
+int AudioFifo::audio_fifo_size()
+{ return av_audio_fifo_size( fifo_ ); }
 
 bool AudioFifo::operator!() const
 { return !error_; }

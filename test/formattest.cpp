@@ -170,10 +170,13 @@ TEST_F( FormatTest, decode ) {
     EXPECT_EQ( 2217, _audio_frames );
 }
 
-TEST_F( FormatTest, resample_frames ) {
+TEST_F( FormatTest, DISABLED_resample_frames ) {
 
     Format _format( FILE_FLAC_HD );
     ASSERT_EQ( std::error_code().message(), _format.errc().message() );
+
+    Format _target_format( "/tmp/file_out.mp3", Format::WRITE );
+    ASSERT_EQ( std::error_code().message(), _target_format.errc().message() );
 
     auto _codec = _format.find_codec( CODEC_TYPE::AUDIO );
     Resample _res(
@@ -184,15 +187,25 @@ TEST_F( FormatTest, resample_frames ) {
 
     AudioFifo _fifo( _codec->sample_fmt(), _codec->channels() );
 
+    //TODO Codec _encoder;
+
     int audio_packets=0, _audio_frames=0;
     Packet _packet;
-    while( !_format.read( _format.find_codec( CODEC_TYPE::AUDIO ), _packet ) ) {
+    while( !_format.read( _codec, _packet ) ) {
         Frame _frame;
         if( !_format.decode( _packet, _frame ) ) {
             ++_audio_frames;
             std::cout << "Frame#: " << _audio_frames << std::endl;
             _fifo.write( _res, _frame );
 
+            int audio_fifo_size = _fifo.audio_fifo_size();
+            int codec_frame_size = audio_fifo_size; //TODO _codec->frame_size();
+
+            int _frame_size = ( audio_fifo_size > codec_frame_size ? codec_frame_size : audio_fifo_size );
+            Frame _output_frame( *_codec, _frame_size );
+            while( !_fifo.read( _output_frame,  _frame_size ) ) {
+                std::cout << "use Fifo#: " << _audio_frames << std::endl;
+            }
             //use fifo...
 
         } else ASSERT_FALSE( true );

@@ -14,13 +14,15 @@
 #include "option.h"
 #include "frame.h"
 
+class AVFormatContext;
+
 /** @brief libavcpp namespace. */
 namespace av {
 
 ///@cond DOC_INTERNAL
 class IoContext;
-struct Codec;
 class Packet;
+struct Codec;
 
 class CodecIterator : public std::iterator<std::input_iterator_tag, int> {
   int* p;
@@ -126,7 +128,8 @@ public:
 
     std::error_code decode( Packet& packet, Frame& frame);
 //    std::error_code decode( Codec& codec, Packet& packet, std::function< void( Frame& frame ) > fnc );
-    std::error_code encode( Codec& codec, Frame& frame, std::function< void( Packet& packet ) > fnc );
+    std::error_code encode( Codec& codec, Frame& frame, Packet& packet );
+//    std::error_code encode( Codec& codec, Frame& frame, std::function< void( Packet& packet ) > fnc );
 
     /**
      * @brief checks if an error has occurred.
@@ -161,7 +164,8 @@ private:
     /** Global timestamp for the audio frames */
     int64_t pts = 0;
     std::vector< Codec > codecs_;
-    std::shared_ptr< __av_format_context > format_context_ = nullptr;
+    AVFormatContext* format_context_ = nullptr;
+    std::shared_ptr < IoContext > io_context_ = nullptr;
     void load_codecs();
 };
 }//namespace av

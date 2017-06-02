@@ -9,4 +9,10 @@
 #include "libavcpp/option.h"
 #include "libavcpp/packet.h"
 #include "libavcpp/resample.h"
+
+template< class Input >
+std::error_code decode( Input input ) {
+
+}
+
 #endif // LIBAVCPP_H

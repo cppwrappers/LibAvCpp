@@ -46,7 +46,8 @@ public:
         Frame& frame /** @param frame the frame to write */
     );
     /** @brief read from the fifo. */
-    AudioFifo& read( Codec& codec, std::function< void( Frame& frame ) > fnc );
+    AudioFifo& read( Frame& frame, const int frame_size );
+//    AudioFifo& read( Codec& codec, std::function< void( Frame& frame ) > fnc );
 
 //TODO    AVFifoBuffer ** 	buf
 //        single buffer for interleaved, per-channel buffers for planar
@@ -64,6 +65,7 @@ public:
     /** @brief size, in bytes, of one sample in a buffer. */
     int sample_size();
 
+    int audio_fifo_size();
     /**
      * @brief checks if an error has occurred.
      * Returns true if an error has occurred on the associated format context.

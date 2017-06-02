@@ -128,7 +128,6 @@ int Codec::frame_size()
 uint64_t Codec::channel_layout()
 { return codec_context_->channel_layout; }
 
-
 std::array< std::string, 4 > Codec::codec_names_ {{"mp3", "flac", "aac", "vorbis"} };
 std::string Codec::name ( CODEC::Enum codec ) {
     if ( codec == CODEC::NONE ) { return "none"; }

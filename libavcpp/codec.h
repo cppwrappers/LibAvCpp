@@ -41,7 +41,6 @@ struct Codec {
     int pixel_format() const;
     SampleFormat sample_fmt() const;
 
-
     /** \brief Number of samples per channel in an audio frame.
     encoding: set by libavcodec in avcodec_open2(). Each submitted frame except the last must contain exactly frame_size samples per channel.
               May be 0 when the codec has CODEC_CAP_VARIABLE_FRAME_SIZE set, then the frame size is not restricted.

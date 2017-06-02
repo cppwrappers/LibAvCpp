@@ -10,8 +10,8 @@ SET(PATCH_VERSION "1" CACHE PATCH_VERSION "The package build number." )
 # -----------------------   Options and Parameters  -----------------------
 # -------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-option(build_tests "Build all unit tests." OFF)
-option(build_samples "Build samples." OFF)
+option(build_tests "Build all unit tests." ON)
+option(build_samples "Build samples." ON)
 option(build_documentation "Build the project documentation." OFF)
 
 SET(TESTFILES "/testfiles" CACHE TESTFILES "The path to the testfiles.")

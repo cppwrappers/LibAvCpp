@@ -8,7 +8,7 @@
 
 ///@cond DOC_INTERNAL
 extern "C" {
-struct AVDictionary;
+    struct AVDictionary;
 }
 ///@endcond DOC_INTERNAL
 
@@ -18,8 +18,8 @@ class Option {
 public:
     Option();
     enum TYPE {STRING, INT };
-    Option( const std::string& key, const std::string& val ) : type_(STRING), key_(key), str_val_(val) {}
-    Option( const std::string& key, const int& val ) : type_(INT), key_(key), int_val_(val) {}
+    Option ( const std::string& key, const std::string& val ) : type_ ( STRING ), key_ ( key ), str_val_ ( val ) {}
+    Option ( const std::string& key, const int& val ) : type_ ( INT ), key_ ( key ), int_val_ ( val ) {}
 
     TYPE type() const
     {return type_;}
@@ -33,6 +33,8 @@ public:
     int c_int() const
     {return int_val_;}
 
+
+
 private:
     TYPE type_;
     std::string key_, str_val_;
@@ -40,7 +42,7 @@ private:
 
     friend struct Codec;
     friend struct Resample;
-    static std::shared_ptr< AVDictionary > make_options( const std::vector< Option >& options );
+    static std::shared_ptr< AVDictionary > make_options ( const std::vector< Option >& options );
 };
 typedef std::vector< Option > options_t;
 }//namespace av

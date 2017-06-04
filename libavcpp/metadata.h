@@ -1,3 +1,8 @@
+/*          Copyright Etienne Knecht 2017 - 2019.
+ * Distributed under the Boost Software License, Version 1.0.
+ *    (See accompanying file LICENSE_1_0.txt or copy at
+ *          http://www.boost.org/LICENSE_1_0.txt)
+ */
 #ifndef METADATA_H
 #define METADATA_H
 
@@ -21,34 +26,26 @@ public:
     enum Enum {
         TITLE, ALBUM, ARTIST, COMPOSER, PERFORMER, COMMENT, YEAR, TRACK, DISC, GENRE, PUBLISHER
     };
-    /**
-     * @brief set metadata with value by key.
-     * @param name the metadata key
-     * @param value the value for the metadata
-     */
-    void set ( const char* name, const char* value );
-    /**
-     * @brief get the metadata key type as string.
-     * @param tag the key to get as string.
-     * @return the ffmpeg key as string.
-     */
-    static std::string name ( Enum tag );
-    /**
-     * @brief get the metadata value by key.
-     * @param key the key for the metadata element.
-     * @return the value referenced by key.
-     */
-    std::string& get ( const Enum& key );
-    /**
-     * @brief get keys of valid metadata elments.
-     * @return the keys of the defined metadata elements
-     */
+    /** @brief set metadata with value by key. */
+    void set (
+            const char* name /** @param name the metadata key */,
+            const char* value /** @param value the value for the metadata */
+    );
+    /** @brief get the metadata key type as string.
+        @return the ffmpeg key as string. */
+    static std::string name ( Enum tag /** @param tag the key to get as string. */ );
+    /** @brief get the metadata value by key.
+        @return the value referenced by key. */
+    std::string& get ( const Enum& key /** @param key the key for the metadata element. */ );
+    /** @brief get keys of valid metadata elments.
+        @return the keys of the defined metadata elements */
     std::vector< Enum > tag_names ();
 
     friend std::ostream& operator<< ( std::ostream& stream, const Metadata& meta_data ) {
         for ( auto& __tag : meta_data.tags ) {
             stream << name ( __tag.first ) << ": \t\t" << __tag.second << "\n";
         }
+
         return stream;
     }
 private:

@@ -9,7 +9,7 @@ project( libavcpp-test )
 # ---------------------   External Dependencies       ---------------------
 # -------------------------------------------------------------------------
 include(ExternalProject)
-include(${CMAKE_MODULE_PATH}/../external/gtest.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/external/gtest.cmake)
 
 SET( INCLUDES ${INCLUDES} ${GTEST_INCLUDE_DIR} )
 

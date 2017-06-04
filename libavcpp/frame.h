@@ -5,7 +5,7 @@
 
 ///@cond DOC_INTERNAL
 extern "C" {
-struct AVFrame;
+    struct AVFrame;
 }
 ///@endcond DOC_INTERNAL
 
@@ -14,7 +14,7 @@ struct Codec;
 struct Frame {
 public:
     Frame();
-    Frame( Codec& codec, const int framesize );
+    Frame ( Codec& codec, const int framesize );
 
     ~Frame();
 
@@ -64,7 +64,7 @@ public:
     /** \brief Presentation timestamp in time_base units (time when frame should be shown to user). */
     int64_t pts();
     /** \brief Set presentation timestamp in time_base units. */
-    void pts( int64_t _pts );
+    void pts ( int64_t _pts );
 
 //         More...
 

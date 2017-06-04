@@ -43,38 +43,51 @@ struct CODEC_TYPE {
 
 /** \brief sample format enum. */
 enum SampleFormat {
-  SAMPLE_FMT_NONE = -1, SAMPLE_FMT_U8, SAMPLE_FMT_S16, SAMPLE_FMT_S32,
-  SAMPLE_FMT_FLT, SAMPLE_FMT_DBL, SAMPLE_FMT_U8P, SAMPLE_FMT_S16P,
-  SAMPLE_FMT_S32P, SAMPLE_FMT_FLTP, SAMPLE_FMT_DBLP, SAMPLE_FMT_NB
+    SAMPLE_FMT_NONE = -1, SAMPLE_FMT_U8, SAMPLE_FMT_S16, SAMPLE_FMT_S32,
+    SAMPLE_FMT_FLT, SAMPLE_FMT_DBL, SAMPLE_FMT_U8P, SAMPLE_FMT_S16P,
+    SAMPLE_FMT_S32P, SAMPLE_FMT_FLTP, SAMPLE_FMT_DBLP, SAMPLE_FMT_NB
 };
-inline std::string time_to_string( uint64_t playtime ) {
-  int _seconds = playtime / 1000;
-  std::stringstream ss;
-  if(_seconds >= 3600) {
-    int hours = _seconds / 3600;
-    if(hours < 10) {
-      ss << "0";
+inline std::string time_to_string ( uint64_t playtime ) {
+    int _seconds = playtime / 1000;
+    std::stringstream ss;
+
+    if ( _seconds >= 3600 ) {
+        int hours = _seconds / 3600;
+
+        if ( hours < 10 ) {
+            ss << "0";
+        }
+
+        ss << hours << ":";
+        _seconds = _seconds - ( hours * 3600 );
+
+    } else { ss << "00:"; }
+
+    if ( _seconds >= 60 ) {
+        int minutes = _seconds / 60;
+
+        if ( minutes < 10 ) {
+            ss << "0";
+        }
+
+        ss << minutes << ":";
+        _seconds = _seconds - ( minutes * 60 );
+
+    } else { ss << "00:"; }
+
+    if ( _seconds < 10 ) {
+        ss << "0";
     }
-    ss << hours << ":";
-    _seconds = _seconds - (hours * 3600);
-  } else ss << "00:";
-  if(_seconds >= 60) {
-    int minutes = _seconds / 60;
-    if(minutes < 10) {
-      ss << "0";
-    }
-    ss << minutes << ":";
-    _seconds = _seconds - (minutes * 60);
-  } else ss << "00:";
-  if(_seconds < 10) {
-    ss << "0";
-  }
-  ss << _seconds << ".";
-  int _millis = (playtime - ( ( playtime / 1000 ) * 1000 ) );
-  if( _millis < 100 )  ss << "0";
-  if( _millis < 10 )  ss << "0";
-  ss << _millis;
-  return ss.str();
+
+    ss << _seconds << ".";
+    int _millis = ( playtime - ( ( playtime / 1000 ) * 1000 ) );
+
+    if ( _millis < 100 )  { ss << "0"; }
+
+    if ( _millis < 10 )  { ss << "0"; }
+
+    ss << _millis;
+    return ss.str();
 }
 
 }//namespace av

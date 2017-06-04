@@ -10,7 +10,7 @@
 
 ///@cond DOC_INTERNAL
 extern "C" {
-struct AVPacket;
+    struct AVPacket;
 }
 ///@endcond DOC_INTERNAL
 
@@ -34,10 +34,10 @@ class Packet {
 public:
 
     Packet();
-    Packet(const Packet&) = delete;
-    Packet& operator=(const Packet&) = delete;
-    Packet(Packet&&) = delete;
-    Packet& operator=(Packet&&) = delete;
+    Packet ( const Packet& ) = delete;
+    Packet& operator= ( const Packet& ) = delete;
+    Packet ( Packet&& ) = delete;
+    Packet& operator= ( Packet&& ) = delete;
     ~Packet();
 
     /**

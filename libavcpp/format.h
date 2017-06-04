@@ -1,3 +1,8 @@
+/*          Copyright Etienne Knecht 2017 - 2019.
+ * Distributed under the Boost Software License, Version 1.0.
+ *    (See accompanying file LICENSE_1_0.txt or copy at
+ *          http://www.boost.org/LICENSE_1_0.txt)
+ */
 #ifndef FORMAT_H
 #define FORMAT_H
 
@@ -25,15 +30,15 @@ class Packet;
 struct Codec;
 
 class CodecIterator : public std::iterator<std::input_iterator_tag, int> {
-  int* p;
+    int* p;
 public:
-  CodecIterator(int* x) :p(x) {}
-  CodecIterator(const CodecIterator& mit) : p(mit.p) {}
-  CodecIterator& operator++() {++p;return *this;}
-  CodecIterator operator++(int) {CodecIterator tmp(*this); operator++(); return tmp;}
-  bool operator==(const CodecIterator& rhs) {return p==rhs.p;}
-  bool operator!=(const CodecIterator& rhs) {return p!=rhs.p;}
-  int& operator*() {return *p;}
+    CodecIterator ( int* x ) :p ( x ) {}
+    CodecIterator ( const CodecIterator& mit ) : p ( mit.p ) {}
+    CodecIterator& operator++() {++p; return *this;}
+    CodecIterator operator++ ( int ) {CodecIterator tmp ( *this ); operator++(); return tmp;}
+    bool operator== ( const CodecIterator& rhs ) {return p==rhs.p;}
+    bool operator!= ( const CodecIterator& rhs ) {return p!=rhs.p;}
+    int& operator*() {return *p;}
 };
 ///@endcond DOC_INTERNAL
 
@@ -83,27 +88,27 @@ public:
     enum Mode { READ, WRITE };
 
     /** @brief open mediafile with a file by path */
-    Format( const std::string&              /** @param filename the path to the file to open */
-            filename, Mode mode = READ,     /** @param mode     set the format i/o mode to READ or WRITE. */
-            options_t options = options_t() /** @param options  set the AV option for the format. */
-    );
+    Format ( const std::string&             /** @param filename the path to the file to open */
+             filename, Mode mode = READ,     /** @param mode     set the format i/o mode to READ or WRITE. */
+             options_t options = options_t() /** @param options  set the AV option for the format. */
+           );
     /** @brief open mediafile with a std::istream */
-    Format( std::iostream& stream,          /** @param filename the media data stream to open */
-            Mode mode = READ,               /** @param mode     set the format i/o mode to READ or WRITE. */
-            options_t options = options_t() /** @param options  set the AV option for the format. */
-    );
+    Format ( std::iostream& stream,         /** @param filename the media data stream to open */
+             Mode mode = READ,               /** @param mode     set the format i/o mode to READ or WRITE. */
+             options_t options = options_t() /** @param options  set the AV option for the format. */
+           );
 
-    Format(const Format&) = default;
-    Format& operator=(const Format&) = default;
-    Format(Format&&) = default;
-    Format& operator=(Format&&) = default;
+    Format ( const Format& ) = default;
+    Format& operator= ( const Format& ) = default;
+    Format ( Format&& ) = default;
+    Format& operator= ( Format&& ) = default;
 
     /** @brief DTOR */
     ~Format();
 
     const std::vector< Codec >::iterator begin();
     const std::vector< Codec >::iterator end();
-    const std::vector< Codec >::iterator find_codec( CODEC_TYPE::Enum type );
+    const std::vector< Codec >::iterator find_codec ( CODEC_TYPE::Enum type );
 
     /**
      * @brief returns the metadata of the associated format context.
@@ -116,20 +121,23 @@ public:
      */
     uint64_t playtime() const;
 
-    /** @brief Read a packet from the associated format context. */
-    Format& read( Packet& packet /** @param packet the packet to associate the data to. */ );
-
-    Format& read( std::vector< Codec >::iterator codec, Packet& packet );
-
-//    Format& read( std::function< void( Codec& codec, Packet& packet ) > fnc );
-//    Format& read( std::vector< Codec >::iterator codec, std::function< void( Codec& codec, Packet& packet ) > fnc );
-
-    Format& write( Packet& packet );
-
-    std::error_code decode( Packet& packet, Frame& frame);
-//    std::error_code decode( Codec& codec, Packet& packet, std::function< void( Frame& frame ) > fnc );
-    std::error_code encode( Codec& codec, Frame& frame, Packet& packet );
-//    std::error_code encode( Codec& codec, Frame& frame, std::function< void( Packet& packet ) > fnc );
+    /** @brief Read packets from the associated format context. */
+    Format& read ( Packet& packet /** @param packet Packet to associate the data to. */ );
+    /** @brief Read packets filtered by codec. */
+    Format& read (
+            std::vector< Codec >::iterator codec /** @param codec filter iterator */,
+            Packet& packet /** @param packet Packet to associate the data to. */ );
+    /** @brief Write packet to output */
+    Format& write ( Packet& packet /** @param packet Packet to write. */ );
+    /** @brief Decode audio data from packet and store in frame. */
+    std::error_code decode (
+            Packet& packet,
+            Frame& frame );
+    /** @brief Encode audio data from frame and store in packet */
+    std::error_code encode (
+            Codec& codec /** @param codec Encoder to use. */,
+            Frame& frame /** @param frame the frame to encode */,
+            Packet& packet /** @param package to store the encoded audio datam. */ );
 
     /**
      * @brief checks if an error has occurred.

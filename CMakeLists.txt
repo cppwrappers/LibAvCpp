@@ -9,7 +9,7 @@ SET(PATCH_VERSION "1" CACHE PATCH_VERSION "The package build number." )
 # -------------------------------------------------------------------------
 # -----------------------   Options and Parameters  -----------------------
 # -------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/" "/usr/share/SFML/cmake/Modules/" )
 option(build_tests "Build all unit tests." ON)
 option(build_samples "Build samples." ON)
 option(build_documentation "Build the project documentation." OFF)

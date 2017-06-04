@@ -3,11 +3,13 @@
 namespace av {
 
 static int read_callback ( void *data, uint8_t *buf, int buf_size ) {
-    IoContext* _av_io_context = reinterpret_cast< IoContext* >( data );
-    if( _av_io_context->datafile->read ( reinterpret_cast< char* > ( buf ), buf_size ) )
+    IoContext* _av_io_context = reinterpret_cast< IoContext* > ( data );
+
+    if ( _av_io_context->datafile->read ( reinterpret_cast< char* > ( buf ), buf_size ) )
     { std::cout << "Unable to open: " << _av_io_context->datafile->fail() << std::endl; }
+
     std::cout << "read: " << _av_io_context->datafile->gcount() << " bytes" << std::endl;
-    return static_cast< int >( _av_io_context->datafile->gcount() );
+    return static_cast< int > ( _av_io_context->datafile->gcount() );
 }
 int write_callback ( void* stream, uint8_t* buf, int buf_size ) {
     std::cout << "Write bytes: " << buf_size << std::endl;
@@ -16,7 +18,7 @@ int write_callback ( void* stream, uint8_t* buf, int buf_size ) {
     try {
         m_buffer->insert ( m_buffer->size(),
                            reinterpret_cast<std::string::const_pointer> ( buf ),
-                           static_cast< size_t >( buf_size ) );
+                           static_cast< size_t > ( buf_size ) );
 
         std::cout << "Write bytes: " << buf_size << std::endl;
 
@@ -65,7 +67,7 @@ std::error_code IoContext::init_input_format_context ( AVFormatContext *pCtx, st
 
     // allocate the AVIOContext
     av_io_context_ = avio_alloc_context (
-                         buffer, static_cast< int >( bufferSize ),
+                         buffer, static_cast< int > ( bufferSize ),
                          0, // write flag (1=true,0=false)
                          reinterpret_cast<void*> ( this ),
                          read_callback, write_callback, seek_callback /*read, write, sync*/
@@ -81,7 +83,7 @@ std::error_code IoContext::init_input_format_context ( AVFormatContext *pCtx, st
     datafile->read ( reinterpret_cast< char* > ( buffer ), bufferSize );
 
     if ( datafile->tellg() == 0 )
-    { return std::error_code ( /*TODO add code*/); }
+    { return std::error_code ( /*TODO add code*/ ); }
 
     datafile->seekg ( 0 );
 

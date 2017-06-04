@@ -33,8 +33,8 @@ struct dr_meter {
 class DynamicRange {
 public:
     DynamicRange();
-    void meter_init(struct dr_meter *self);
-    std::error_code meter_start(struct dr_meter *self, int channels, int sample_rate, int sample_fmt);
+    void meter_init ( struct dr_meter *self );
+    std::error_code meter_start ( struct dr_meter *self, int channels, int sample_rate, int sample_fmt );
 
 };
 }//namespace av

@@ -1,3 +1,8 @@
+/*          Copyright Etienne Knecht 2017 - 2019.
+ * Distributed under the Boost Software License, Version 1.0.
+ *    (See accompanying file LICENSE_1_0.txt or copy at
+ *          http://www.boost.org/LICENSE_1_0.txt)
+ */
 #include "metadata.h"
 
 #include <cstring>
@@ -34,11 +39,14 @@ void Metadata::set ( const char* name, const char* value ) {
 
     else if ( strcmp ( "YEAR", _upper_name.c_str() ) == 0 ) {
         std::string _year = value;
-        if( _year.size() > 4 ) {
-            if( 4U == _year.find( "-" ) ) {
-                _year = _year.substr( 0, 4 );
-            } else std::cout << "unknown date format: " << _year << std::endl;
+
+        if ( _year.size() > 4 ) {
+            if ( 4U == _year.find ( "-" ) ) {
+                _year = _year.substr ( 0, 4 );
+
+            } else { std::cout << "unknown date format: " << _year << std::endl; }
         }
+
         tags[ YEAR ] = _year;
     }
 

@@ -11,7 +11,7 @@
 
 ///@cond DOC_INTERNAL
 extern "C" {
-struct AVCodecContext;
+    struct AVCodecContext;
 }
 ///@endcond DOC_INTERNAL
 
@@ -20,14 +20,13 @@ namespace av {
 /** @brief The Codec struct */
 struct Codec {
 
-    /** create input codec */
+    /** create output codec */
+    Codec ( Format& format_context, CODEC::Enum codec, options_t options );
 
-    Codec( Format& format_context, CODEC::Enum codec, options_t options );
-
-    Codec( const Codec& codec ) = delete;
-    Codec& operator=(const Codec& codec) = delete;
-    Codec(Codec&&);
-    Codec& operator=(Codec&&);
+    Codec ( const Codec& codec ) = delete;
+    Codec& operator= ( const Codec& codec ) = delete;
+    Codec ( Codec&& );
+    Codec& operator= ( Codec&& );
     ~Codec();
 
     CODEC_TYPE::Enum codec_type() const;
@@ -62,7 +61,7 @@ struct Codec {
      * @return reference to output stream
      */
     friend std::ostream& operator<< ( std::ostream& stream, const Codec& codec ) {
-        stream << name( codec.codec_type() ) << ":" << name( codec.codec() ) <<  " (" << codec.bitrate() << " kb/s, " <<
+        stream << name ( codec.codec_type() ) << ":" << name ( codec.codec() ) <<  " (" << codec.bitrate() << " kb/s, " <<
                codec.sample_rate() << " hz, " << codec.channels() << " channel(s), " <<
                codec.bits_per_sample() << " bps, " <<
                codec.width() << "x" << codec.height() << " px)";
@@ -81,7 +80,7 @@ private:
     friend class AudioFifo;
     friend class Format;
     std::error_code errc_; //TODO
-    Codec( AVCodecContext* codec, options_t options );
+    Codec ( AVCodecContext* codec, options_t options );
     AVCodecContext* codec_context_ = nullptr;
 
     /* some helper methods */

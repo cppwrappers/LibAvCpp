@@ -27,7 +27,7 @@ extern "C" {
 
 namespace av {
 
-Packet::Packet () : packet_( new AVPacket() ) {
+Packet::Packet () : packet_ ( new AVPacket() ) {
     av_init_packet ( packet_ );
     packet_->data = NULL;
     packet_->size = 0;
@@ -46,7 +46,7 @@ uint8_t* Packet::data()
 int Packet::size()
 { return packet_->size; }
 size_t Packet::stream_index ()
-{ return static_cast< size_t >( packet_->stream_index ); }
+{ return static_cast< size_t > ( packet_->stream_index ); }
 int Packet::flags()
 { return packet_->flags; }
 int Packet::duration()

@@ -23,20 +23,23 @@ extern "C" {
 #include <memory>
 
 namespace av {
-std::shared_ptr< AVDictionary > Option::make_options( const std::vector< Option >& options ) {
+std::shared_ptr< AVDictionary > Option::make_options ( const std::vector< Option >& options ) {
     AVDictionary *opts = nullptr;
-    for( auto __option : options ) {
-        switch( __option.type() ) {
+
+    for ( auto __option : options ) {
+        switch ( __option.type() ) {
         case Option::INT:
-            av_dict_set_int( &opts, __option.key(), __option.c_int(), 0 );
+            av_dict_set_int ( &opts, __option.key(), __option.c_int(), 0 );
             break;
+
         case Option::STRING:
-            av_dict_set( &opts, __option.key(), __option.c_str(), 0 );
+            av_dict_set ( &opts, __option.key(), __option.c_str(), 0 );
             break;
         }
     }
-    return std::shared_ptr< AVDictionary >( opts, [](AVDictionary* ptr) {
-        av_dict_free( &ptr );
+
+    return std::shared_ptr< AVDictionary > ( opts, [] ( AVDictionary* ptr ) {
+        //TODO if( ptr ) av_dict_free( &ptr );
     } );
 }
 }//namespace av

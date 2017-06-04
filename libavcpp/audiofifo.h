@@ -29,24 +29,24 @@ public:
     /**
      * @brief allocate an AudioFifo buffer.
      */
-    AudioFifo(
+    AudioFifo (
         const SampleFormat& sample_fmt  /** @param sample_fmt sample format*/,
         const int channels              /** @param channels */
     );
     ~AudioFifo();
 
-    AudioFifo(const AudioFifo&) = delete;
-    AudioFifo& operator=(const AudioFifo&) = delete;
-    AudioFifo(AudioFifo&&) = delete;
-    AudioFifo& operator=(AudioFifo&&) = delete;
+    AudioFifo ( const AudioFifo& ) = delete;
+    AudioFifo& operator= ( const AudioFifo& ) = delete;
+    AudioFifo ( AudioFifo&& ) = delete;
+    AudioFifo& operator= ( AudioFifo&& ) = delete;
 
     /** @brief resample and write frame to fifo. */
-    AudioFifo& write(
+    AudioFifo& write (
         Resample& resample /** @param resample the resample context. */,
         Frame& frame /** @param frame the frame to write */
     );
     /** @brief read from the fifo. */
-    AudioFifo& read( Frame& frame, const int frame_size );
+    AudioFifo& read ( Frame& frame, const int frame_size );
 //    AudioFifo& read( Codec& codec, std::function< void( Frame& frame ) > fnc );
 
 //TODO    AVFifoBuffer ** 	buf

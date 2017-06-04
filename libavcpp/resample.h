@@ -8,7 +8,7 @@
 
 ///@cond DOC_INTERNAL
 extern "C" {
-struct SwrContext;
+    struct SwrContext;
 }
 ///@endcond DOC_INTERNAL
 
@@ -16,17 +16,17 @@ struct SwrContext;
 namespace av {
 struct Resample {
 public:
-    Resample( int source_channels, SampleFormat source_sample_fmt, int source_sample_rate,
-              int target_channels, SampleFormat target_sample_fmt, int target_sample_rate,
-              options_t options );
+    Resample ( int source_channels, SampleFormat source_sample_fmt, int source_sample_rate,
+               int target_channels, SampleFormat target_sample_fmt, int target_sample_rate,
+               options_t options );
     ~Resample();
 
-    Resample(const Resample&) = delete;
-    Resample& operator=(const Resample&) = delete;
-    Resample(Resample&&) = default;
-    Resample& operator=(Resample&&) = default;
+    Resample ( const Resample& ) = delete;
+    Resample& operator= ( const Resample& ) = delete;
+    Resample ( Resample&& ) = default;
+    Resample& operator= ( Resample&& ) = default;
 
-    int alloc_buffer( int channels, int frame_size, SampleFormat sample_fmt );
+    int alloc_buffer ( int channels, int frame_size, SampleFormat sample_fmt );
 
 private:
     friend class AudioFifo;

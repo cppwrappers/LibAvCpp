@@ -170,7 +170,7 @@ TEST_F( FormatTest, decode ) {
     EXPECT_EQ( 2217, _audio_frames );
 }
 
-TEST_F( FormatTest, DISABLED_resample_frames ) {
+TEST_F( FormatTest, resample_frames ) {
 
     Format _format( FILE_FLAC_HD );
     ASSERT_EQ( std::error_code().message(), _format.errc().message() );
@@ -187,15 +187,52 @@ TEST_F( FormatTest, DISABLED_resample_frames ) {
 
     AudioFifo _fifo( _codec->sample_fmt(), _codec->channels() );
 
-    //TODO Codec _encoder;
-
-    int audio_packets=0, _audio_frames=0;
+    int _audio_frames=0;
     Packet _packet;
     while( !_format.read( _codec, _packet ) ) {
         Frame _frame;
         if( !_format.decode( _packet, _frame ) ) {
             ++_audio_frames;
-            std::cout << "Frame#: " << _audio_frames << std::endl;
+            _fifo.write( _res, _frame );
+
+            int audio_fifo_size = _fifo.audio_fifo_size();
+            int codec_frame_size = audio_fifo_size; //TODO _codec->frame_size();
+
+            int _frame_size = ( audio_fifo_size > codec_frame_size ? codec_frame_size : audio_fifo_size );
+            Frame _output_frame( *_codec, _frame_size );
+            while( !_fifo.read( _output_frame,  _frame_size ) ) {}
+
+        } else ASSERT_FALSE( true );
+    }
+    EXPECT_EQ( "End of file", _format.errc().message() );
+    EXPECT_EQ( 2217, _audio_frames );
+}
+
+TEST_F( FormatTest, transcode_audio_file ) {
+
+    Format _format( FILE_FLAC_HD );
+    ASSERT_EQ( std::error_code().message(), _format.errc().message() );
+
+    Format _target_format( "/tmp/file_out.mp3", Format::WRITE );
+    ASSERT_EQ( std::error_code().message(), _target_format.errc().message() );
+
+    auto _codec = _format.find_codec( CODEC_TYPE::AUDIO );
+    Resample _res(
+        _codec->channels(), _codec->sample_fmt(), _codec->sample_rate(),
+        _codec->channels(), _codec->sample_fmt(), _codec->sample_rate(),
+        options_t()
+    );
+
+    Codec _dest_codec( _target_format, CODEC::MP3, std::vector< Option >( { { "b", 128000 }, { "ar", 44100 }, { "ac", 2 }/*TODO , { "channel_layout", 2 }*/ } ) );
+
+    AudioFifo _fifo( _codec->sample_fmt(), _codec->channels() );
+
+    int _audio_frames=0;
+    Packet _packet, _dest_packet;
+    while( !_format.read( _codec, _packet ) ) {
+        Frame _frame;
+        if( !_format.decode( _packet, _frame ) ) {
+            ++_audio_frames;
             _fifo.write( _res, _frame );
 
             int audio_fifo_size = _fifo.audio_fifo_size();
@@ -204,65 +241,15 @@ TEST_F( FormatTest, DISABLED_resample_frames ) {
             int _frame_size = ( audio_fifo_size > codec_frame_size ? codec_frame_size : audio_fifo_size );
             Frame _output_frame( *_codec, _frame_size );
             while( !_fifo.read( _output_frame,  _frame_size ) ) {
-                std::cout << "use Fifo#: " << _audio_frames << std::endl;
+                _format.encode( _dest_codec, _output_frame, _dest_packet );
+                _format.write( _dest_packet );
             }
-            //use fifo...
 
         } else ASSERT_FALSE( true );
     }
     EXPECT_EQ( "End of file", _format.errc().message() );
-    EXPECT_EQ( 514997648, _fifo.nb_samples() );
-    EXPECT_EQ( 2222, audio_packets );
-    EXPECT_EQ( 9078720, _audio_frames );
+    EXPECT_EQ( 2217, _audio_frames );
 }
-
-//TEST_F( FormatTest, transcode_audio_file ) {
-
-//    std::string dest_file  = "/tmp/file_out.mp3";
-
-//    { //Transcode
-//        Format _format ( FILE_FLAC );
-//        Format _target_format(  dest_file, Format::WRITE );
-//        ASSERT_EQ( std::error_code().message(), _format.errc().message() );
-//        ASSERT_EQ( std::error_code().message(), _target_format.errc().message() );
-
-//        Codec _codec;
-//        int _index = 0;
-//        for( auto& __codec : _format ) {
-//            if( __codec->codec_type() == CODEC_TYPE::AUDIO )
-//            { _codec = Codec( *__codec ); break; }
-//            ++_index;
-//        }
-
-//        Codec _encoder;
-
-//        Resample _resampler(
-//            _codec.channels(), _codec.sample_format(), _codec.samplerate(),
-//            _codec.channels(), _codec.sample_format(), _codec.samplerate(),
-//            options_t() );
-
-//        AudioFifo _fifo( _codec.sample_format(), _codec.channels() );
-
-//        Packet _packet = Packet();
-//        int samples=0;
-//        while( !_format.read( _packet ) ) {
-//            if( _packet.stream_index() == _index ) {
-//                Frame _frame;
-//                if( !_packet.decode( _codec, _frame ) ) {
-//                    samples += _frame.nb_samples();
-//                    _fifo.write( _resampler, _frame );
-
-//                    //write audio data
-//                    //TODO _target_format.write( )
-//                }
-//            }
-//        }
-//        //TODO EXPECT_EQ( std::error_code().message(), errc.message() );
-//        EXPECT_EQ( 9078720, samples );
-
-
-
-
 
 ////        Format _format;
 ////        ASSERT_EQ( std::error_code().message(), _format.open( filename ).message() );

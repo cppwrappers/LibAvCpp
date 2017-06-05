@@ -31,13 +31,6 @@ if( ${LIBAO_FOUND} )
     target_link_libraries(ao_play avcpp ${LIBAO_LIBRARIES} ${LIBS})
 endif()
 
-find_package(SFML)
-if( ${SFML_FOUND} )
-    include_directories(${ROOT} ${INCLUDES} ${SFML_INCLUDE_DIR})
-    add_executable(sfml_play play_sfml.cpp)
-    target_link_libraries(sfml_play avcpp ${SFML_LIBRARIES} ${LIBS})
-endif()
-
 #find_package(SDL)
 #if( ${SDL_FOUND} )
 #    include_directories(${ROOT} ${INCLUDES} ${SDL_INCLUDE_DIR})

@@ -33,7 +33,7 @@ namespace av {
 
 ///@cond DOC_INTERNAL
 static std::once_flag _register_flag;
-static void av_init ( LOG_LEVEL log = LOG_LEVEL::FATAL ) {
+static void av_init ( LOG_LEVEL log = LOG_LEVEL::QUIET ) {
     /** @param log the global loglevel. */
     std::call_once ( _register_flag, [&log]() {
         av_register_all ();
@@ -45,7 +45,7 @@ static void av_init ( LOG_LEVEL log = LOG_LEVEL::FATAL ) {
 ///@endcond DOC_INTERNAL
 
 Format::Format ( const std::string& filename, Mode mode, Options options ) {
-    av_init( LOG_LEVEL::FATAL ); //TODO
+    av_init( LOG_LEVEL::QUIET ); //TODO
 
     if ( mode == Mode::WRITE ) {
         //open file for writing
@@ -89,7 +89,7 @@ Format::Format ( const std::string& filename, Mode mode, Options options ) {
 
 /** TODO no unique pointer for IoStream */
 Format::Format ( std::iostream& stream, Mode mode, Options options ) : io_context_ ( std::unique_ptr< IoContext >() ) {
-    av_init(LOG_LEVEL::FATAL);
+    av_init(LOG_LEVEL::QUIET);
 
     if ( mode == Mode::WRITE ) {
 

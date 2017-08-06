@@ -18,7 +18,7 @@ struct Resample {
 public:
     Resample ( int source_channels, SampleFormat source_sample_fmt, int source_sample_rate,
                int target_channels, SampleFormat target_sample_fmt, int target_sample_rate,
-               options_t options );
+               Options options );
     ~Resample();
 
     Resample ( const Resample& ) = delete;

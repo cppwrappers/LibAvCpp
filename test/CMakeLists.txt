@@ -11,10 +11,12 @@ project( libavcpp-test )
 include(ExternalProject)
 include(${CMAKE_SOURCE_DIR}/cmake/external/gtest.cmake)
 
-SET( INCLUDES ${INCLUDES} ${GTEST_INCLUDE_DIR} )
-
-SET( INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
-
+SET( INCLUDES ${INCLUDES}  )
+SET( INCLUDES ${INCLUDES}
+    ${Boost_INCLUDE_DIRS}
+    ${AVCODEC_INCLUDES}
+    ${GTEST_INCLUDE_DIR}
+)
 
 # -------------------------------------------------------------------------
 # -----------------------   Manage Test Cases       -----------------------

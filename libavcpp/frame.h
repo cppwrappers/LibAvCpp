@@ -9,17 +9,20 @@ extern "C" {
 }
 ///@endcond DOC_INTERNAL
 
+#define NUM_DATA_POINTERS 8
+
 namespace av {
 struct Codec;
 struct Frame {
 public:
+
     Frame();
     Frame ( Codec& codec, const int framesize );
 
     ~Frame();
 
-//    uint8_t* data [AV_NUM_DATA_POINTERS]
-//        pointer to the picture/channel planes. More...
+    /** @brief pointer to the picture/channel planes. */
+    uint8_t** data( int index );
 
     /**
      * @brief For video, size in bytes of each picture line.
@@ -210,6 +213,7 @@ public:
 
 //    AVBufferRef * 	qp_table_buf
 //        Not to be accessed directly from outside libavutil. More...
+
 
 private:
     friend class Format;

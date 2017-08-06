@@ -33,7 +33,7 @@ namespace av {
 
 ///@cond DOC_INTERNAL
 static std::once_flag _register_flag;
-static void av_init ( LOG_LEVEL log = LOG_LEVEL::INFO ) {
+static void av_init ( LOG_LEVEL log = LOG_LEVEL::FATAL ) {
     /** @param log the global loglevel. */
     std::call_once ( _register_flag, [&log]() {
         av_register_all ();
@@ -44,10 +44,8 @@ static void av_init ( LOG_LEVEL log = LOG_LEVEL::INFO ) {
 }
 ///@endcond DOC_INTERNAL
 
-Format::Format ( const std::string& filename, Mode mode, options_t options ) {
-    av_init();
-//    format_context_ = std::make_shared< __av_format_context >( &errc_, filename.c_str(), (mode==Mode::WRITE), options );
-
+Format::Format ( const std::string& filename, Mode mode, Options options ) {
+    av_init( LOG_LEVEL::FATAL ); //TODO
 
     if ( mode == Mode::WRITE ) {
         //open file for writing
@@ -67,28 +65,31 @@ Format::Format ( const std::string& filename, Mode mode, options_t options ) {
 
         /** Guess the desired container format based on the file extension. */
         if ( ! ( format_context_ ->oformat = av_guess_format ( NULL/*short name*/, filename.c_str(), NULL/*mime_type*/ ) ) )
-        { errc_ = make_error_code ( error ); return; }
+        { errc_ = make_error_code ( AV_ENCODER_NOT_FOUND ); return; }
 
         av_strlcpy ( format_context_->filename, filename.c_str(), sizeof ( format_context_->filename ) );
-
-        //load codecs
 
     } else {
         //open file for reading
         int _error;
 
-        if ( ( _error = avformat_open_input ( &format_context_, filename.c_str(), NULL /*fmt*/, NULL /*TODO options*/ ) ) != 0 )
+        if ( ( _error = avformat_open_input (
+                   &format_context_,
+                   filename.c_str(),
+                   NULL /*fmt*/,
+                   options.av_options() ) ) != 0 )
         { errc_ = av::make_error_code ( _error ); return; }
 
-        if ( ( _error = avformat_find_stream_info ( format_context_, NULL /*TODO options*/ ) ) < 0 )
+        if ( ( _error = avformat_find_stream_info ( format_context_, options.av_options() ) ) < 0 )
         { errc_ = av::make_error_code ( _error ); return; };
 
-        load_codecs();
+        load_codecs( options );
     }
 }
 
-Format::Format ( std::iostream& stream, Mode mode, options_t options ) : io_context_ ( std::unique_ptr< IoContext >() ) {
-    av_init();
+/** TODO no unique pointer for IoStream */
+Format::Format ( std::iostream& stream, Mode mode, Options options ) : io_context_ ( std::unique_ptr< IoContext >() ) {
+    av_init(LOG_LEVEL::FATAL);
 
     if ( mode == Mode::WRITE ) {
 
@@ -123,7 +124,7 @@ Format::Format ( std::iostream& stream, Mode mode, options_t options ) : io_cont
         if ( ( _error = avformat_find_stream_info ( format_context_, nullptr ) ) < 0 )
         { errc_ = make_error_code ( _error ); return; };
 
-        load_codecs();
+        load_codecs( options );
     }
 }
 
@@ -249,7 +250,7 @@ Format& Format::write ( Packet& packet ) {
 std::error_code Format::decode ( Packet& packet, Frame& frame ) {
 
     int data_present = 0, error = 0;
-    av_frame_unref ( frame.frame_ );
+    //TODO av_frame_unref ( frame.frame_ );
     error = avcodec_decode_audio4 (
                 codecs_.at ( packet.stream_index() ).codec_context_,
                 frame.frame_,
@@ -283,11 +284,14 @@ std::error_code Format::encode ( Codec& codec, Frame& frame, Packet& packet ) {
     return std::error_code();
 }
 
-void Format::load_codecs() {
+void Format::load_codecs( Options& options ) {
     codecs_.clear();
 
     for ( unsigned short i=0; i<format_context_->nb_streams; i++ ) {
-        codecs_.push_back ( Codec ( format_context_->streams[i]->codec, options_t() /*TODO */ ) );
+        Codec _codec( format_context_->streams[i]->codec, options );
+        if( !_codec.errc_ ) {
+            codecs_.push_back ( std::move( _codec ) );
+        } else { errc_ = _codec.errc_; return; }
     }
 }
 

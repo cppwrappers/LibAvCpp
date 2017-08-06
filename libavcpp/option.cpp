@@ -23,7 +23,7 @@ extern "C" {
 #include <memory>
 
 namespace av {
-std::shared_ptr< AVDictionary > Option::make_options ( const std::vector< Option >& options ) {
+AVDictionary* make_options ( const std::vector< Option >& options ) {
     AVDictionary *opts = nullptr;
 
     for ( auto __option : options ) {
@@ -38,8 +38,36 @@ std::shared_ptr< AVDictionary > Option::make_options ( const std::vector< Option
         }
     }
 
-    return std::shared_ptr< AVDictionary > ( opts, [] ( AVDictionary* ptr ) {
+    //return std::shared_ptr< AVDictionary > ( opts, [] ( AVDictionary* ptr ) {
         //TODO if( ptr ) av_dict_free( &ptr );
-    } );
+    return nullptr; //TODO
+    }
+
+Options::Options( std::vector< std::pair< std::string, std::string > > values ) {
+    for( auto& o : values ) {
+        options_map_[o.first] = Option( o.first, o.second );
+    }
+}
+
+Option& Options::operator[] ( std::string x ) {
+    return options_map_[x];
+}
+AVDictionary** Options::av_options() {
+    AVDictionary *opts = nullptr;
+    for ( auto __option : options_map_ ) {
+        switch ( __option.second.type() ) {
+        case Option::INT:
+            av_dict_set_int ( &opts, __option.second.key(), __option.second.c_int(), 0 );
+            break;
+
+        case Option::STRING:
+            av_dict_set ( &opts, __option.second.key(), __option.second.c_str(), 0 );
+            break;
+        }
+    }
+
+    //return std::shared_ptr< AVDictionary > ( opts, [] ( AVDictionary* ptr ) {
+        //TODO if( ptr ) av_dict_free( &ptr );
+    return &opts;
 }
 }//namespace av

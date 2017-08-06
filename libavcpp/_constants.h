@@ -34,7 +34,7 @@ enum class LOG_LEVEL {
 
 /** \brief codec enum. */
 struct CODEC {
-    enum Enum { NONE = -1, MP3=0, FLAC=1, AAC=2, VORBIS=3 };
+    enum Enum { NONE = -1, MP2=0, MP3=1, FLAC=2, AAC=3, VORBIS=4 };
 };
 /** \brief codec type enum. */
 struct CODEC_TYPE {

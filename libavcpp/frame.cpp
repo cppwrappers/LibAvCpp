@@ -48,6 +48,11 @@ Frame::~Frame() {
     if ( frame_ )
     { av_frame_free ( &frame_ ); }
 }
+
+uint8_t** Frame::data( int index ) {
+    av_frame_make_writable( frame_ );
+    return &frame_->data[index];
+}
 int Frame::format() const
 { return frame_->format; }
 int Frame::nb_samples() const

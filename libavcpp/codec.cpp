@@ -49,6 +49,9 @@ inline AVCodecID __codec ( CODEC::Enum codec ) {
     case CODEC::FLAC:
         return AV_CODEC_ID_FLAC;
 
+    case CODEC::MP2:
+        return AV_CODEC_ID_MP2;
+
     case CODEC::MP3:
         return AV_CODEC_ID_MP3;
 
@@ -77,26 +80,23 @@ inline CODEC_TYPE::Enum __codec ( AVMediaType codec_type ) {
     }
 }
 
-Codec::Codec ( AVCodecContext* codec, options_t options ) {
-    AVCodec *_input_codec;
+Codec::Codec ( AVCodecContext* codec, Options options ) {
 
+    AVCodec *_input_codec;
     if ( ! ( _input_codec = avcodec_find_decoder ( codec->codec_id ) ) ) {
         errc_ = make_error_code ( AV_DECODER_NOT_FOUND );
 
     } else {
         int error;
-        auto _options = Option::make_options ( options ).get(); //TODO
-
-        if ( ( error = avcodec_open2 ( codec, _input_codec, &_options ) ) < 0 ) {
+        if ( ( error = avcodec_open2 ( codec, _input_codec, options.av_options() ) ) < 0 ) {
             errc_ = make_error_code ( error );
             return;
         }
     }
-
     codec_context_ = codec;
 }
 
-Codec::Codec ( Format& format, CODEC::Enum codec, options_t options ) {
+Codec::Codec ( Format& format, CODEC::Enum codec, Options options ) {
 
     /* Find the encoder to be used by its name. */
     AVCodec* _output_codec = nullptr;
@@ -108,8 +108,13 @@ Codec::Codec ( Format& format, CODEC::Enum codec, options_t options ) {
 
     /* Create a new audio stream in the output file container. */
     AVStream *_stream = nullptr;
-
     if ( ! ( _stream = avformat_new_stream ( format.format_context_, _output_codec ) ) ) {
+        errc_ = make_error_code ( ENOMEM );
+        return;
+    }
+
+    codec_context_ = avcodec_alloc_context3(_output_codec);
+    if (!codec_context_) {
         errc_ = make_error_code ( ENOMEM );
         return;
     }
@@ -130,10 +135,7 @@ Codec::Codec ( Format& format, CODEC::Enum codec, options_t options ) {
 
     /* Open the encoder for the audio stream to use it later. */
     int error;
-    auto _options = Option::make_options ( options ); //TODO
-    auto _options_ptr = _options.get();
-
-    if ( ( error = avcodec_open2 ( codec_context_, _output_codec, &_options_ptr  ) ) < 0 ) {
+    if ( ( error = avcodec_open2 ( codec_context_, _output_codec, options.av_options() ) ) < 0 ) {
         errc_ = make_error_code ( error );
         return;
     }
@@ -142,14 +144,10 @@ Codec::Codec ( Format& format, CODEC::Enum codec, options_t options ) {
 Codec::Codec ( Codec&& ) = default;
 Codec& Codec::operator= ( Codec&& ) = default;
 
-//Codec::Codec( std::unique_ptr< __codec_context > context ) : codec_context_( std::move( context ) ) {}
-//Codec::Codec( Format& format_context, CODEC::Enum codec, options_t options ) {
-
-
-
-
-//}
-Codec::~Codec() {}
+Codec::~Codec() {
+//TODO    if ( codec_context_ )
+//    { avcodec_close( codec_context_ ); }
+}
 
 CODEC_TYPE::Enum Codec::codec_type() const
 { return __codec ( codec_context_->codec_type ); }
@@ -171,6 +169,16 @@ int Codec::pixel_format() const
 { return codec_context_->pix_fmt; }
 SampleFormat Codec::sample_fmt() const
 { return static_cast< SampleFormat > ( codec_context_->sample_fmt ); }
+bool Codec::sample_fmt( SampleFormat format ) {
+    codec_context_->sample_fmt = static_cast< AVSampleFormat >( format );
+    const enum AVSampleFormat *p = codec_context_->codec->sample_fmts;
+    while (*p != AV_SAMPLE_FMT_NONE) {
+        if ( *p == static_cast< AVSampleFormat >( format ) )
+            return 1;
+        p++;
+    }
+    return 0;
+}
 int Codec::frame_size()
 { return codec_context_->frame_size; }
 uint64_t Codec::channel_layout()

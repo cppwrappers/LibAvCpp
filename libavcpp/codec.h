@@ -21,7 +21,7 @@ namespace av {
 struct Codec {
 
     /** create output codec */
-    Codec ( Format& format_context, CODEC::Enum codec, options_t options );
+    Codec ( Format& format_context, CODEC::Enum codec, Options options );
 
     Codec ( const Codec& codec ) = delete;
     Codec& operator= ( const Codec& codec ) = delete;
@@ -39,20 +39,14 @@ struct Codec {
     int height() const;
     int pixel_format() const;
     SampleFormat sample_fmt() const;
+    bool sample_fmt( SampleFormat format );
 
-    /** \brief Number of samples per channel in an audio frame.
-    encoding: set by libavcodec in avcodec_open2(). Each submitted frame except the last must contain exactly frame_size samples per channel.
-              May be 0 when the codec has CODEC_CAP_VARIABLE_FRAME_SIZE set, then the frame size is not restricted.
-    decoding: may be set by some decoders to indicate constant frame size
-    */
     int frame_size();
     /** \brief Audio channel layout.
     encoding: set by user.
     decoding: set by user, may be overwritten by libavcodec.
      */
     uint64_t channel_layout();
-
-
 
     /**
      * @brief write the codec definitions to the output stream.
@@ -79,8 +73,9 @@ struct Codec {
 private:
     friend class AudioFifo;
     friend class Format;
-    std::error_code errc_; //TODO
-    Codec ( AVCodecContext* codec, options_t options );
+
+    std::error_code errc_;
+    Codec ( AVCodecContext* codec, Options options );
     AVCodecContext* codec_context_ = nullptr;
 
     /* some helper methods */

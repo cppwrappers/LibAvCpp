@@ -26,10 +26,10 @@ extern "C" {
 namespace av {
 Resample::Resample ( int source_channels, SampleFormat source_sample_fmt, int source_sample_rate,
                      int target_channels, SampleFormat target_sample_fmt, int target_sample_rate,
-                     options_t options ) {
+                     Options options ) {
 
     //create resample context
-    auto _options = Option::make_options ( options );
+    //TODO auto _options = Option::make_options ( options );
     resample_context_ = swr_alloc_set_opts ( NULL,
                         av_get_default_channel_layout ( source_channels ),
                         static_cast< AVSampleFormat > ( source_sample_fmt ),
@@ -37,7 +37,7 @@ Resample::Resample ( int source_channels, SampleFormat source_sample_fmt, int so
                         av_get_default_channel_layout ( target_channels ),
                         static_cast< AVSampleFormat > ( target_sample_fmt ),
                         target_sample_rate,
-                        0, _options.get() );
+                        0, options.av_options() );
 
     if ( !resample_context_ )
     { throw make_error_code ( ENOMEM ); }

@@ -19,7 +19,9 @@
 #include "option.h"
 #include "frame.h"
 
+///@cond DOC_INTERNAL
 class AVFormatContext;
+///@endcond DOC_INTERNAL
 
 /** @brief libavcpp namespace. */
 namespace av {
@@ -42,44 +44,45 @@ public:
 };
 ///@endcond DOC_INTERNAL
 
-typedef std::shared_ptr< Codec > codec_ptr;
+/** @brief format representation of a mediafile.
 
-/** @brief format of mediafile.
+<p>libav follows the model of the ffmpeg libraries. reading and writing of media data to output is done with the av::Format class. av::Format
+has accessors for metadata and parameters of the media data. The av:Format class is created with a string of the filename or an std::iostream
+object. Optional the read and write mode can be set, default is read. the third optional parameter is the FFMpeg Option av::Option iterator.</p>
 
-<p>Format reads or writes media data using a path on the filesystem or with std::iostream.</p>
+open media file, read stream information and metadata:
+<pre>
+av::Format _format ( "filename", Format::READ ); // filename or std::iostream
+if( !_format ) {
 
-<h4>open a file from local filesystem and get the stream codecs of the media format:</h4>
-
-<code>
-#include "libavcpp.h"
-
-int main ( int argc, char *argv[] ) {
-    av::Format format( FILE|STREAM );
-    if( !format ) {
-        std::cout << format.errc().message() << std::endl;
-        return format.errc().value();
+    //get audio codec
+    for( auto& codec : _format) {
+        if( codec.codec_type() == av::CODEC_TYPE::AUDIO )
+            //do something with the codec...
     }
 
-    for( auto& __stream : _format.find() ) {
-        if( __stream.codec_type() == CODEC_TYPE::AUDIO ) {
-            ... select stream ...
-        }
-    }
-}
-</code>
+    //get audiocodec directly
+    auto audio_codec = _format.find_codec( av::CODEC_TYPE::AUDIO );
 
-<p>the input is opened at construction time. the state of the associated input can be retrieved with the !operator or with the relative function. the
-streams of the format can be accessed with the find method. By passing a CODEC_TYPE to the results will be filtered by this type.</p>
+    //read metadata
+    av::Metadata metadata = _format.metadata();
+    std::cout << metadata.get( av::Metadata::ALBUM ) << " - " << ;metadata.get( av::Metadata::ARTIST ) << std::endl;
 
-<h4>reading and retrieve the format packets:</h4>
+} else //file not opened.
+</pre>
 
-<code>
-av::Packet packet;
+<p>the process for decoding is to read the av::Packets from the av:Format. The Packets
+hold the encodend data. the av::Packets get decoded to frames, processed (for example
+resample audio data) and written to the fifo.</p>
+<pre>
 
-while( !format.read( packet ) ) {
-    ... packet ...
-}
-</code>
+</pre>
+
+<p>encoding is the process backwards. Reading from fifo and writing to format,
+encoding frames to packages using the encoder.</p>
+<pre>
+
+</pre>
 */
 class Format {
 public:
@@ -89,19 +92,19 @@ public:
 
     /** @brief open mediafile with a file by path */
     Format ( const std::string&             /** @param filename the path to the file to open */
-             filename, Mode mode = READ,     /** @param mode     set the format i/o mode to READ or WRITE. */
-             options_t options = options_t() /** @param options  set the AV option for the format. */
+             filename, Mode mode = READ,    /** @param mode     set the format i/o mode to READ or WRITE. */
+             Options options = Options()    /** @param options  set the AV option for the format. */
            );
     /** @brief open mediafile with a std::istream */
     Format ( std::iostream& stream,         /** @param filename the media data stream to open */
-             Mode mode = READ,               /** @param mode     set the format i/o mode to READ or WRITE. */
-             options_t options = options_t() /** @param options  set the AV option for the format. */
+             Mode mode = READ,              /** @param mode     set the format i/o mode to READ or WRITE. */
+             Options options = Options()    /** @param options  set the AV option for the format. */
            );
 
-    Format ( const Format& ) = default;
-    Format& operator= ( const Format& ) = default;
-    Format ( Format&& ) = default;
-    Format& operator= ( Format&& ) = default;
+    Format ( const Format& ) = delete;
+    Format& operator= ( const Format& ) = delete;
+    Format ( Format&& ) = delete;
+    Format& operator= ( Format&& ) = delete;
 
     /** @brief DTOR */
     ~Format();
@@ -174,7 +177,7 @@ private:
     std::vector< Codec > codecs_;
     AVFormatContext* format_context_ = nullptr;
     std::shared_ptr < IoContext > io_context_ = nullptr;
-    void load_codecs();
+    void load_codecs( Options& options );
 };
 }//namespace av
 #endif // FORMAT_H

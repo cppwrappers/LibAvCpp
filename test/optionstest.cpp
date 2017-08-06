@@ -29,19 +29,35 @@
 
 namespace av {
 
-TEST( OptionsTest, open ) {
+TEST( OptionsTest, add_options ) {
 
-//    Option option( )
-//    Format _format ( FILE_FLAC );
-//    ASSERT_FALSE( _format );
+    Options option;
+    option[ "option1" ] = Option( "option1", "value1" );
+    option[ "option2" ] = Option( "option2", "value2" );
+    option[ "option3" ] = Option( "option3", "value3" );
 
-//    int audio=0, other=0;
-//    std::for_each( _format.begin(), _format.end(), [&audio,&other]( Codec& codec ) {
-//        if( codec.codec_type() == CODEC_TYPE::AUDIO ) ++audio;
-//        else ++other;
-//    });
+    std::string str1 = option["option1"].c_str();
+    EXPECT_EQ( "value1", str1 );
 
-//    EXPECT_EQ( 1, audio );
-//    EXPECT_EQ( 5, other );
+    std::string str2 = option["option2"].c_str();
+    EXPECT_EQ( "value2", str2 );
+
+    std::string str3 = option["option3"].c_str();
+    EXPECT_EQ( "value3", str3 );
 }
+TEST( OptionsTest, construct_with_options ) {
+
+    Options option( { { "option1", "value1" }, {"option2", "value2"}, {"option3", "value3" } } );
+
+    std::string str1 = option["option1"].c_str();
+    EXPECT_EQ( "value1", str1 );
+
+    std::string str2 = option["option2"].c_str();
+    EXPECT_EQ( "value2", str2 );
+
+    std::string str3 = option["option3"].c_str();
+    EXPECT_EQ( "value3", str3 );
+}
+
+
 }//namespace av

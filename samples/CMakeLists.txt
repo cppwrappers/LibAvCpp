@@ -24,6 +24,9 @@ SET( INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
 #include_directories(${ROOT} ${INCLUDES})
 #aux_source_directory( ${PROJECT_SOURCE_DIR} SQUAWK_SOURCES )
 
+add_executable(encode encode.cpp)
+target_link_libraries(encode avcpp ${LIBS})
+
 find_package(LibAO)
 if( ${LIBAO_FOUND} )
     include_directories(${ROOT} ${INCLUDES} ${LIBAO_INCLUDE_DIR})

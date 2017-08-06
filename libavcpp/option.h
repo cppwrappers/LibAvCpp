@@ -1,6 +1,7 @@
 #ifndef OPTION_H
 #define OPTION_H
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -16,7 +17,7 @@ extern "C" {
 namespace av {
 class Option {
 public:
-    Option();
+    Option() {}
     enum TYPE {STRING, INT };
     Option ( const std::string& key, const std::string& val ) : type_ ( STRING ), key_ ( key ), str_val_ ( val ) {}
     Option ( const std::string& key, const int& val ) : type_ ( INT ), key_ ( key ), int_val_ ( val ) {}
@@ -33,17 +34,25 @@ public:
     int c_int() const
     {return int_val_;}
 
-
-
 private:
     TYPE type_;
     std::string key_, str_val_;
     int int_val_;
-
-    friend struct Codec;
-    friend struct Resample;
-    static std::shared_ptr< AVDictionary > make_options ( const std::vector< Option >& options );
 };
-typedef std::vector< Option > options_t;
+class Options {
+public:
+    Options() {}
+    Options( std::vector< std::pair< std::string, std::string > > values );
+
+    Option& operator[] ( std::string x );
+private:
+    friend struct Codec;
+    friend struct Format;
+    friend struct Resample;
+
+    Option option_;
+    std::map< std::string, Option > options_map_;
+    AVDictionary** av_options();
+};
 }//namespace av
 #endif // OPTION_H

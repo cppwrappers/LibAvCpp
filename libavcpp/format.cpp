@@ -45,7 +45,7 @@ static void av_init ( LOG_LEVEL log = LOG_LEVEL::QUIET ) {
 ///@endcond DOC_INTERNAL
 
 Format::Format ( const std::string& filename, Mode mode, Options options ) {
-    av_init( LOG_LEVEL::QUIET ); //TODO
+    av_init( LOG_LEVEL::DEBUGGING ); //TODO
 
     if ( mode == Mode::WRITE ) {
         //open file for writing

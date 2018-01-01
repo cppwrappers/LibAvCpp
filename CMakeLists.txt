@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3)
 
 project(LibAvCpp)
 
@@ -6,40 +6,47 @@ SET(MAJOR_VERSION "0")
 SET(MINOR_VERSION "1")
 SET(PATCH_VERSION "1" CACHE PATCH_VERSION "The package build number." )
 
-# -------------------------------------------------------------------------
 # -----------------------   Options and Parameters  -----------------------
-# -------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/" )
+
 option(build_tests "Build all unit tests." OFF)
 option(build_samples "Build samples." OFF)
 option(build_documentation "Build the project documentation." OFF)
 
 SET(TESTFILES "/testfiles" CACHE TESTFILES "The path to the testfiles.")
 
-# -------------------------------------------------------------------------
-# -----------------------   Config Toolchain        -----------------------
-# -------------------------------------------------------------------------
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libstdc++")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "-std=c++11")
-    add_definitions(-Wall -Wextra)
-    IF(CMAKE_BUILD_TYPE MATCHES RELEASE)
-        add_definitions(-DNDEBUG)
-        add_definitions(-DELPP_DISABLE_TRACE_LOGS)
-    ENDIF(CMAKE_BUILD_TYPE MATCHES RELEASE)
-endif()
+SET(LIBAVCPP_VERSION "master" CACHE STRING "The tagged version.")
+
+set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set (THREADS_PREFER_PTHREAD_FLAG ON)
+find_package (Threads REQUIRED)
+
+link_libraries("-static")
+
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif(CCACHE_FOUND)
+
+add_definitions( -DHTTP_BUFFER_SIZE=4096 -DHTTP_CLIENT_TIMEOUT=5
+                 -DHTTP_SERVER_THREAD_POOL_SIZE=10 -DASIO_STANDALONE )
 
 add_definitions(-DLIBAV_CPP_RELEASE="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")
 add_definitions(-DTESTFILES="${TESTFILES}/")
 
-#add headers for editor
-FILE(GLOB_RECURSE HeaderFiles "${PROJECT_SOURCE_DIR}/*.h" "${ROOT}/libavcpp.h")
-add_custom_target(headers SOURCES ${HeaderFiles})
+# ---------------------   External Dependencies       ---------------------
 
-# -------------------------------------------------------------------------
+include(ExternalProject)
+include(cmake/gtest.cmake)
+include(cmake/boost.cmake)
+include(cmake/ffmpeg.cmake)
+
+SET(IMPORTED_INCLUDES ${Boost_INCLUDE_DIRS} ${FFMPEG_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
+
 # -----------------------      Manage Modules       -----------------------
-# -------------------------------------------------------------------------
+
 add_subdirectory ( libavcpp )
 if( build_samples )
     add_subdirectory ( samples )
@@ -48,9 +55,8 @@ if( build_tests )
     add_subdirectory ( test )
 endif()
 
-# -------------------------------------------------------------------------
 # -----------------------   Doxygen                 -----------------------
-# -------------------------------------------------------------------------
+
 if( build_documentation )
     find_package(Doxygen)
     if(DOXYGEN_FOUND)

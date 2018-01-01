@@ -168,7 +168,7 @@ TEST_F( FormatTest, read_filter_packages ) {
     EXPECT_EQ( 2217, audio_packets );
 }
 
-TEST_F( FormatTest, decode ) {
+TEST_F( FormatTest, DISABLED_decode ) {
 
     Format _format ( FILE_FLAC );
     ASSERT_FALSE( _format );
@@ -187,7 +187,7 @@ TEST_F( FormatTest, decode ) {
     EXPECT_EQ( 2217, _audio_frames );
 }
 
-TEST_F( FormatTest, resample_frames ) {
+TEST_F( FormatTest, DISABLED_resample_frames ) {
 
     Format _format( FILE_FLAC_HD );
     ASSERT_EQ( std::error_code().message(), _format.errc().message() );
@@ -225,7 +225,7 @@ TEST_F( FormatTest, resample_frames ) {
     EXPECT_EQ( 2217, _audio_frames );
 }
 
-TEST_F( FormatTest, transcode_audio_file ) {
+TEST_F( FormatTest, DISABLED_transcode_audio_file ) {
 
     Format _format( FILE_FLAC_HD );
     ASSERT_EQ( std::error_code().message(), _format.errc().message() );

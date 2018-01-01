@@ -5,18 +5,16 @@ cmake_minimum_required(VERSION 3.0)
 
 project( samples )
 
-SET( PROJECT_TEST_NAME "lightning-tests" )
-
 # -------------------------------------------------------------------------
 # ---------------------   External Dependencies       ---------------------
 # -------------------------------------------------------------------------
-find_package(Boost 1.54.0 COMPONENTS filesystem system)
-find_package(LibAVCodec COMPONENTS avformat avcodec avfilter avresample swscale avutil )
-SET( LIBS ${LIBS}
-    ${Boost_LIBRARIES} ${AVCODEC_LIBRARIES}
-#    -lpcrecpp -lpthread -luuid -lswresample -lm -lz
-)
-SET( INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
+#find_package(Boost 1.54.0 COMPONENTS filesystem system)
+#find_package(LibAVCodec COMPONENTS avformat avcodec avfilter avresample swscale avutil )
+#SET( LIBS ${LIBS}
+#    ${Boost_LIBRARIES} ${AVCODEC_LIBRARIES}
+##    -lpcrecpp -lpthread -luuid -lswresample -lm -lz
+#)
+#SET( INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
 
 # -------------------------------------------------------------------------
 # -----------------------   Compile Binary          -----------------------
@@ -27,12 +25,12 @@ SET( INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS} ${AVCODEC_INCLUDES} )
 add_executable(encode encode.cpp)
 target_link_libraries(encode avcpp ${LIBS})
 
-find_package(LibAO)
-if( ${LIBAO_FOUND} )
-    include_directories(${ROOT} ${INCLUDES} ${LIBAO_INCLUDE_DIR})
-    add_executable(ao_play play_ao.cpp)
-    target_link_libraries(ao_play avcpp ${LIBAO_LIBRARIES} ${LIBS})
-endif()
+#find_package(LibAO)
+#if( ${LIBAO_FOUND} )
+#    include_directories(${ROOT} ${INCLUDES} ${LIBAO_INCLUDE_DIR})
+#    add_executable(ao_play play_ao.cpp)
+#    target_link_libraries(ao_play avcpp ${LIBAO_LIBRARIES} ${LIBS})
+#endif()
 
 #find_package(SDL)
 #if( ${SDL_FOUND} )

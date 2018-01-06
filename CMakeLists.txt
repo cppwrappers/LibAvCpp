@@ -37,13 +37,15 @@ add_definitions(-DLIBAV_CPP_RELEASE="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_V
 add_definitions(-DTESTFILES="${TESTFILES}/")
 
 # ---------------------   External Dependencies       ---------------------
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
-include(ExternalProject)
-include(cmake/gtest.cmake)
-include(cmake/boost.cmake)
-include(cmake/ffmpeg.cmake)
+#include(ExternalProject)
+#include(cmake/gtest.cmake)
+#include(cmake/boost.cmake)
+#include(cmake/ffmpeg.cmake)
 
-SET(IMPORTED_INCLUDES ${Boost_INCLUDE_DIRS} ${FFMPEG_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
+#SET(IMPORTED_INCLUDES ${Boost_INCLUDE_DIRS} ${FFMPEG_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
 
 # -----------------------      Manage Modules       -----------------------
 

@@ -33,4 +33,4 @@
 *.bak
 *.orig
 CMakeLists.txt.user
-
+.build

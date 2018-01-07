@@ -36,6 +36,8 @@ add_definitions( -DHTTP_BUFFER_SIZE=4096 -DHTTP_CLIENT_TIMEOUT=5
 add_definitions(-DLIBAV_CPP_RELEASE="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")
 add_definitions(-DTESTFILES="${TESTFILES}/")
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/conan/conanfile.py.in ${CMAKE_CURRENT_BINARY_DIR}/conan/conanfile.py @ONLY)
+
 # ---------------------   External Dependencies       ---------------------
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()

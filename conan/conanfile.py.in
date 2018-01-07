@@ -1,0 +1,43 @@
+from conans import ConanFile, CMake, tools
+import zipfile
+
+class LibAvCppConan(ConanFile):
+    name = "LibAvCpp"
+    version = '@LIBAVCPP_VERSION@'
+    url = 'https://github.com/'
+    license = 'LGPL'
+    settings = "os", "compiler", "build_type", "arch"
+    options = {"build_tests":  [True, False], "build_samples": [True, False]}
+    default_options = "build_tests=False", "build_samples=False"
+    generators = "cmake"
+    description = "C++ wrapper for ffmpeg libraries"
+    requires = "ffmpeg/3.3.6@conan-cpp/latest", "bzip2/1.0.6@conan/stable", "lzma/5.2.3@bincrafters/stable", "zlib/1.2.11@conan/stable", "Boost/1.64.0@conan/stable", "gtest/1.8.0@bincrafters/stable"
+    default_options = "gtest:shared=False", "Boost:shared=False", "Boost:without_atomic=True", "Boost:without_chrono=True", "Boost:without_container=True", "Boost:without_context=False", "Boost:without_coroutine=False", "Boost:without_coroutine2=False", "Boost:without_date_time=False", "Boost:without_exception=False", "Boost:without_fiber=False", "Boost:without_filesystem=False", "Boost:without_graph=False", "Boost:without_graph_parallel=False", "Boost:without_iostreams=False", "Boost:without_locale=False", "Boost:without_log=True", "Boost:without_math=False", "Boost:without_metaparse=False", "Boost:without_mpi=False", "Boost:without_program_options=False", "Boost:without_random=False", "Boost:without_regex=False", "Boost:without_serialization=False", "Boost:without_signals=False", "Boost:without_system=False", "Boost:without_test=True", "Boost:without_thread=False", "Boost:without_timer=False", "Boost:without_type_erasure=False", "Boost:without_wave=False"
+
+    def source(self):
+        tools.download("https://github.com/cppwrappers/LibAvCpp/archive/master.zip", "libavcpp.zip")
+        zip_ref = zipfile.ZipFile("libavcpp.zip", 'r')
+        zip_ref.extractall()
+        zip_ref.close()
+
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure(defs={
+                "CMAKE_INSTALL_PREFIX": self.package_folder
+            }, source_dir="LibAvCpp-master")
+        cmake.build(target="install")
+
+
+    def package(self):
+        self.copy('*.h', dst='include', src='LibAvCpp-master/include')
+        if self.options.shared:
+            if self.settings.os == "Macos":
+                self.copy(pattern="*.dylib", dst="lib", keep_path=False)
+            else:
+                self.copy(pattern="*.so*", dst="lib", keep_path=False)
+        else:
+            self.copy(pattern="*.a", dst="lib", keep_path=False)
+
+    def build(self):
+        self.cpp_info.libs = ["avcpp"]
+

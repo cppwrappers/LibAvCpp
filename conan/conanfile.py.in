@@ -7,8 +7,8 @@ class LibAvCppConan(ConanFile):
     url = 'https://github.com/'
     license = 'LGPL'
     settings = "os", "compiler", "build_type", "arch"
-    options = {"build_tests":  [True, False], "build_samples": [True, False]}
-    default_options = "build_tests=False", "build_samples=False"
+#    options = {"build_tests":  [True, False], "build_samples": [True, False]}
+#    default_options = "build_tests=False", "build_samples=False"
     generators = "cmake"
     description = "C++ wrapper for ffmpeg libraries"
     requires = "ffmpeg/3.3.6@conan-cpp/latest", "bzip2/1.0.6@conan/stable", "lzma/5.2.3@bincrafters/stable", "zlib/1.2.11@conan/stable", "Boost/1.64.0@conan/stable", "gtest/1.8.0@bincrafters/stable"

@@ -28,7 +28,7 @@ class LibAvCppConan(ConanFile):
 
 
     def package(self):
-        self.copy('*.h', dst='include', src='LibAvCpp-master/include')
+        self.copy('*.h', dst='include', src='LibAvCpp-master/')
         if self.options.shared:
             if self.settings.os == "Macos":
                 self.copy(pattern="*.dylib", dst="lib", keep_path=False)

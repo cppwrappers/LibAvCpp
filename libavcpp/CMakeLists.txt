@@ -8,7 +8,7 @@ project( avcpp )
 # -----------------------   Compile library          -----------------------
 
 #include_directories(${ROOT} ${IMPORTED_INCLUDES})
-aux_source_directory(${PROJECT_SOURCE_DIR}/libavcpp LIBAVCPP_SOURCES )
+aux_source_directory(${PROJECT_SOURCE_DIR} LIBAVCPP_SOURCES )
 add_library(${PROJECT_NAME} ${LIBAVCPP_SOURCES} )
 target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
 

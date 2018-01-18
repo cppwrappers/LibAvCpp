@@ -26,7 +26,6 @@ class LibAvCppConan(ConanFile):
             }, source_dir="LibAvCpp-master")
         cmake.build(target="install")
 
-
     def package(self):
         self.copy('*.h', dst='include', src='LibAvCpp-master/')
         if self.options.shared:

@@ -36,6 +36,6 @@ class LibAvCppConan(ConanFile):
         else:
             self.copy(pattern="*.a", dst="lib", src='lib', keep_path=False)
 
-    def build(self):
+    def package_info(self):
         self.cpp_info.libs = ["avcpp"]
 

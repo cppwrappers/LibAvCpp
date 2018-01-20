@@ -11,4 +11,4 @@ project( avcpp )
 aux_source_directory(${PROJECT_SOURCE_DIR} LIBAVCPP_SOURCES )
 add_library(${PROJECT_NAME} ${LIBAVCPP_SOURCES} )
 target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
-
+install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION lib LIBRARY DESTINATION lib COMPONENT library)

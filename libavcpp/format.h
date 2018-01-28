@@ -180,4 +180,4 @@ private:
     void load_codecs( Options& options );
 };
 }//namespace av
-#endif // FORMAT_H
+#endif //FORMAT_H

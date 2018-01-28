@@ -42,13 +42,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/conan/conanfile.py.in ${CMAKE_CURRENT
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-#include(ExternalProject)
-#include(cmake/gtest.cmake)
-#include(cmake/boost.cmake)
-#include(cmake/ffmpeg.cmake)
-
-#SET(IMPORTED_INCLUDES ${Boost_INCLUDE_DIRS} ${FFMPEG_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
-
 # -----------------------      Manage Modules       -----------------------
 
 add_subdirectory ( libavcpp )

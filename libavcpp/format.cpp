@@ -45,7 +45,7 @@ static void av_init ( LOG_LEVEL log = LOG_LEVEL::QUIET ) {
 ///@endcond DOC_INTERNAL
 
 Format::Format ( const std::string& filename, Mode mode, Options options ) {
-    av_init( LOG_LEVEL::DEBUGGING ); //TODO
+    av_init( LOG_LEVEL::INFO ); //TODO
 
     if ( mode == Mode::WRITE ) {
         //open file for writing
@@ -88,7 +88,7 @@ Format::Format ( const std::string& filename, Mode mode, Options options ) {
 }
 
 /** TODO no unique pointer for IoStream */
-Format::Format ( std::iostream& stream, Mode mode, Options options ) : io_context_ ( std::unique_ptr< IoContext >() ) {
+Format::Format ( std::iostream& stream, Mode mode, Options options ) : io_context_ ( std::make_unique< IoContext >() ) {
     av_init(LOG_LEVEL::QUIET);
 
     if ( mode == Mode::WRITE ) {

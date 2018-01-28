@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------------
 # Build LibAvCpp Samples
 # -------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3)
 
 project( samples )
 
@@ -22,8 +22,8 @@ project( samples )
 #include_directories(${ROOT} ${INCLUDES})
 #aux_source_directory( ${PROJECT_SOURCE_DIR} SQUAWK_SOURCES )
 
-add_executable(encode encode.cpp)
-target_link_libraries(encode avcpp ${LIBS})
+##add_executable(encode encode.cpp)
+#target_link_libraries(encode avcpp ${LIBS})
 
 #find_package(LibAO)
 #if( ${LIBAO_FOUND} )
@@ -42,7 +42,7 @@ target_link_libraries(encode avcpp ${LIBS})
 message( "INCLUDES:" ${INCLUDES} )
 include_directories(${ROOT} ${INCLUDES} )
 add_executable( metadata metadata.cpp )
-target_link_libraries(metadata avcpp ${LIBS} -lpcrecpp -lpthread -lswresample -lm -lz)
+target_link_libraries(metadata avcpp ${CONAN_LIBS} -ldl)
 
 ## -------------------------------------------------------------------------
 ## -----------------------        Test Code          -----------------------

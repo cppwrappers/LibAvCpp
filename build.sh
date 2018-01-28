@@ -19,7 +19,7 @@ if [ -z "$1" ]; then
 else
         echo deploy to bintreay.
         $DOCKER_EXEC "cd /.build/conan && conan export conan-cpp/latest"
-        $DOCKER_EXEC "conan install LibAvCpp/$TAG@conan-cpp/latest --build=missing"
+        $DOCKER_EXEC "conan install LibAvCpp/$TAG@conan-cpp/latest --build"
         $DOCKER_EXEC "conan user -p $1 -r conan-cpp squawkcpp"
         $DOCKER_EXEC "conan upload LibAvCpp/$TAG@conan-cpp/latest --all -r=conan-cpp"
 fi

@@ -168,7 +168,7 @@ TEST_F( FormatTest, read_filter_packages ) {
     EXPECT_EQ( 2217, audio_packets );
 }
 
-TEST_F( FormatTest, DISABLED_decode ) {
+TEST_F( FormatTest, decode ) {
 
     Format _format ( FILE_FLAC );
     ASSERT_FALSE( _format );
@@ -187,7 +187,7 @@ TEST_F( FormatTest, DISABLED_decode ) {
     EXPECT_EQ( 2217, _audio_frames );
 }
 
-TEST_F( FormatTest, DISABLED_resample_frames ) {
+TEST_F( FormatTest, resample_frames ) {
 
     Format _format( FILE_FLAC_HD );
     ASSERT_EQ( std::error_code().message(), _format.errc().message() );
@@ -257,6 +257,7 @@ TEST_F( FormatTest, DISABLED_transcode_audio_file ) {
               /*TODO , { "channel_layout", 2 }*/
             } )
         ) );
+    ASSERT_EQ( std::error_code().message(), _dest_codec.errc().message() );
 
     AudioFifo _fifo( _codec->sample_fmt(), _codec->channels() );
 

@@ -208,7 +208,7 @@ TEST( MetadataTest, open_audio_file_metadata_file_flac_hd ) {
     EXPECT_EQ ( "1/19", metadata.get( av::Metadata::TRACK ) );
     EXPECT_EQ ( "2007", metadata.get( av::Metadata::YEAR ) );
 }
-TEST( MetadataTest, DISABLED_open_audio_stream_metadata_file_flac_hd ) {
+TEST( MetadataTest, open_audio_stream_metadata_file_flac_hd ) {
 
     std::fstream _istream ( std::string( TESTFILES ) + "/BIS1536-001-flac_24.flac", std::ios_base::in );
     Format _format( _istream );

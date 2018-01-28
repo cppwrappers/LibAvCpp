@@ -196,4 +196,16 @@ std::string Codec::name ( CODEC_TYPE::Enum codec ) {
 
     else { return codec_type_names_[ static_cast< size_t > ( codec )]; }
 }
+
+bool Codec::operator!() const
+{ return !errc_ ; }
+bool Codec::good()
+{ return errc_.value() == 0; }
+bool Codec::eof()
+{ return errc_.value() == AV_EOF; }
+bool Codec::fail()
+{ return !errc_ && errc_.value() != AV_EOF; }
+std::error_code Codec::errc ()
+{ return errc_; }
+
 }//namespace libav

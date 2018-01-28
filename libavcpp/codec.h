@@ -70,6 +70,13 @@ struct Codec {
         return stream;
     }
 
+    //TODO temporary made
+    bool operator!() const;
+    bool good();
+    bool eof();
+    bool fail();
+    std::error_code errc ();
+
 private:
     friend class AudioFifo;
     friend class Format;
